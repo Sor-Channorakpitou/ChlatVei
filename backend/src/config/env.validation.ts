@@ -37,6 +37,11 @@ export class EnvironmentVariables {
   @IsBoolean()
   REQUIRE_DIFFERENT_APPROVER = false;
 
+  /** Only for automated tests, which send many requests from one IP. */
+  @Transform(({ value }) => value === undefined || value === true || value === 'true')
+  @IsBoolean()
+  RATE_LIMIT_ENABLED = true;
+
   @IsOptional()
   @IsString()
   ML_SERVICE_URL?: string;

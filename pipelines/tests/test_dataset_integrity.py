@@ -112,6 +112,16 @@ def test_nothing_is_verified_without_a_reviewer(facts):
     assert (verified["reviewed_at"] != "").all()
 
 
+def test_khmer_service_names_are_quoted_from_official_pages(services, sources):
+    names = read(META / "service_names_km.csv")
+    assert set(names["service_slug"]) <= set(services["service_slug"])
+    assert set(names["source_id"]) <= set(sources["source_id"])
+    for row in names.itertuples():
+        text = (PROCESSED / "text" / row.source_id / f"{Path(row.snapshot).stem}.txt").read_text(encoding="utf-8")
+        assert squash(row.evidence) in squash(text), row.service_slug
+        assert row.name_km in row.evidence, row.service_slug
+
+
 def test_every_stated_fact_is_quoted_from_its_snapshot(facts):
     stated = facts[facts["status"] == "stated"]
     missing = []

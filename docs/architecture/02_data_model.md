@@ -18,6 +18,7 @@ Every piece of citizen-facing service information (a requirement, step, fee, pro
 - **Edits never modify a verified row.** Editing creates a new `PENDING` row with `supersedes_id` pointing at the old one. When the new row is approved, the old row becomes `OUTDATED` in the same transaction. History is the chain of `supersedes_id` links, plus `change_records`.
 - **Each row carries provenance:** `source_id`, `source_snapshot_id`, and verbatim `evidence`, exactly as in the Phase 2 annotations.
 - **Origin** records how a row was created: `MANUAL` (admin typed it), `IMPORTED` (from `data/processed/annotations`), or `EXTRACTED` (ML job, with `confidence`).
+- **Khmer first, enforced at publication:** Khmer text columns (`text_km`, `title_km`, `label_km`, `name_km`) may be empty while a row is `PENDING`, because imported facts are often English summaries of Khmer sources. A row **cannot become `VERIFIED` without Khmer text**, and a service cannot be `PUBLISHED` without a Khmer name. The approval code checks this, and database `CHECK` constraints back it up.
 - **Gaps:** `field_gaps` records "the source was checked and does not state X". The UI can then show "Not stated by official sources" instead of nothing.
 
 The shared lifecycle and provenance columns are called **`ContentMeta`** below.
@@ -142,7 +143,7 @@ Indexes: `(service_id, status)` on every content table.
 
 **`categories`:** `id`, `slug UNIQUE`, `name_km`, `name_en`, `position`.
 
-**`services`:** `id`, `slug UNIQUE`, `category_id → categories`, `name_km NOT NULL`, `name_en`, `summary_km`, `summary_en`, `responsible_body_km`, `responsible_body_en`, `government_level enum(NATIONAL, PROVINCIAL, DISTRICT, COMMUNE)`, `publish_status enum(DRAFT, PUBLISHED, ARCHIVED)`, `last_verified_at` (maintained on approval), `search_vector tsvector` (generated), `created_at`, `updated_at`.
+**`services`:** `id`, `slug UNIQUE`, `category_id → categories`, `name_km` (required to publish; see below), `name_en`, `summary_km`, `summary_en`, `responsible_body_km`, `responsible_body_en`, `government_level enum(NATIONAL, PROVINCIAL, DISTRICT, COMMUNE)`, `publish_status enum(DRAFT, PUBLISHED, ARCHIVED)`, `last_verified_at` (maintained on approval), `search_vector tsvector` (generated), `created_at`, `updated_at`.
 A service is visible to citizens when `publish_status = PUBLISHED`. Its content still shows only `VERIFIED` rows.
 
 ### Content (all include `ContentMeta`)

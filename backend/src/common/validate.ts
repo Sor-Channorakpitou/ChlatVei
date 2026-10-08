@@ -14,9 +14,11 @@ function flatten(errors: ValidationError[], prefix = ''): string[] {
  * Validates a body against a DTO class chosen at runtime (e.g. per content type),
  * with the same rules as the global ValidationPipe.
  */
-export async function validateBody<T extends object>(cls: new () => T, body: unknown): Promise<T> {
+export async function validateBody<T extends object>(cls: new () => T, body: unknown): Promise<Partial<T>> {
   const instance = plainToInstance(cls, body ?? {});
   const errors = await validate(instance, { whitelist: true, forbidNonWhitelisted: true });
   if (errors.length > 0) throw new BadRequestException(flatten(errors));
-  return instance;
+  // DTO classes declare every optional field, so unset fields exist as `undefined`.
+  // Drop them: otherwise spreading the DTO over existing values would erase those values.
+  return Object.fromEntries(Object.entries(instance).filter(([, v]) => v !== undefined)) as Partial<T>;
 }

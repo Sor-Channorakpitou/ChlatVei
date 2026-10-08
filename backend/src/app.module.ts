@@ -30,7 +30,13 @@ import { VerificationModule } from './verification/verification.module';
       }),
     }),
     // Global default: 100 requests per minute per IP. Stricter limits on auth and feedback routes.
-    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [{ name: 'default', ttl: 60_000, limit: 100 }],
+        skipIf: () => config.get('RATE_LIMIT_ENABLED') === false,
+      }),
+    }),
     PrismaModule,
     AuditModule,
     AuthModule,
