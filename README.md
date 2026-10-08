@@ -1,4 +1,4 @@
-# ChlatVei (ឆ្លាតវៃ)
+# ChlatVei
 
 > Smarter Citizens, Simpler Services.
 

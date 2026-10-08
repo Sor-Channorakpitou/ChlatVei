@@ -1,7 +1,7 @@
 <title>ChlatVei Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Moul&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a phone-width app column (citizen) and a two-pane workbench (admin), switched by a top bar. */
 :root {
@@ -17,7 +17,6 @@
   --warn: #9a6200; --warn-soft: #fbf0d9;
   --bad: #b3261e; --bad-soft: #fbe5e3;
   --font: "Kantumruy Pro", "Noto Sans Khmer", "Khmer OS", system-ui, sans-serif;
-  --display: "Moul", "Kantumruy Pro", serif;
   --r: 12px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
@@ -41,9 +40,8 @@ h1, h2, h3 { line-height: 1.3; text-wrap: balance; margin: 0; }
 
 /* top bar */
 .topbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding-block: 8px 16px; }
-.brand { display: flex; align-items: baseline; gap: 10px; }
-.brand .km { font-family: var(--display); font-size: 22px; color: var(--accent); }
-.brand .en { font-weight: 600; letter-spacing: .04em; }
+.logo { font-size: 24px; font-weight: 700; letter-spacing: -.01em; color: var(--accent); }
+.logo span { color: var(--gold); }
 .seg { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
 .seg button { border: 0; background: transparent; padding: 6px 14px; border-radius: 999px; font-size: 14px; }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--card); }
@@ -143,7 +141,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
 
 <div class="wrap">
   <div class="topbar">
-    <div class="brand"><span class="km">ឆ្លាតវៃ</span><span class="en">ChlatVei</span></div>
+    <div class="logo" aria-label="ChlatVei">Chlat<span>Vei</span></div>
     <div class="row">
       <div class="seg" role="group" aria-label="View">
         <button id="v-citizen" aria-pressed="true">Citizen</button>
@@ -196,7 +194,7 @@ const T = {
     home: 'ទំព័រដើម', checklist: 'បញ្ជីត្រួតពិនិត្យ', feedback: 'មតិយោបល់',
     heroT: 'តើអ្នកត្រូវការសេវាអ្វី?', heroS: 'ព័ត៌មានច្បាស់លាស់ ដែលមានប្រភពផ្លូវការ',
     ph: 'ឧ. បណ្ណបើកបរ ម៉ូតូ ចុះបញ្ជីរថយន្ត…', popular: 'សេវាពេញនិយម', results: 'លទ្ធផល', none: 'រកមិនឃើញ។ សាកល្បងពាក្យផ្សេង។',
-    independent: 'ឆ្លាតវៃ ជាមគ្គុទ្ទេសក៍ឯករាជ្យ មិនមែនគេហទំព័ររដ្ឋាភិបាលទេ។',
+    independent: 'ChlatVei ជាមគ្គុទ្ទេសក៍ឯករាជ្យ មិនមែនគេហទំព័ររដ្ឋាភិបាលទេ។',
     docs: 'ឯកសារត្រូវការ', steps: 'ជំហាន', fees: 'តម្លៃសេវា', time: 'រយៈពេលដំណើរការ', where: 'កន្លែងដាក់ពាក្យ', who: 'លក្ខខណ្ឌ', sources: 'ប្រភពផ្លូវការ',
     notStated: 'ប្រភពផ្លូវការមិនបានបញ្ជាក់', lastVerified: 'ផ្ទៀងផ្ទាត់ចុងក្រោយ', pendingBadge: 'រង់ចាំការផ្ទៀងផ្ទាត់',
     type: 'ប្រភេទ', citizen: 'ពលរដ្ឋខ្មែរ', foreigner: 'ជនបរទេស', makeList: 'បង្កើតបញ្ជីត្រួតពិនិត្យ', seeList: 'មើលបញ្ជីរបស់ខ្ញុំ',
@@ -288,7 +286,7 @@ function head(title, back) {
 }
 
 function homeScreen() {
-  head('ឆ្លាតវៃ · ChlatVei');
+  head('ChlatVei');
   const q = state.q.trim().toLowerCase();
   const hits = q ? SERVICES.filter((s) => (s.km + ' ' + s.en + ' ' + s.keys).toLowerCase().includes(q)) : [];
   $('#app-body').innerHTML = `

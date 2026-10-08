@@ -4,9 +4,8 @@
 
 ### 1. Product Identity
 
-- **Product name:** ChlatVei
-- **Khmer name:** ឆ្លាតវៃ
-- **Meaning:** Smart / intelligent
+- **Product name:** ChlatVei (the name and logo are always written in English)
+- **Meaning:** Smart / intelligent (from the Khmer word for "clever")
 - **Tagline:** Smarter Citizens, Simpler Services.
 
 ### 2. Product Vision
