@@ -12,6 +12,7 @@ import { RequestIdMiddleware } from './common/request-id.middleware';
 import { validateEnv } from './config/env.validation';
 import { FeedbackModule } from './feedback/feedback';
 import { HealthController } from './health.controller';
+import { MlModule } from './ml/ml.module';
 import { PrismaModule } from './prisma/prisma.service';
 import { ServicesModule } from './services/services.module';
 import { SourcesModule } from './sources/sources';
@@ -39,6 +40,7 @@ import { VerificationModule } from './verification/verification.module';
     }),
     PrismaModule,
     AuditModule,
+    MlModule,
     AuthModule,
     UsersModule,
     ServicesModule,

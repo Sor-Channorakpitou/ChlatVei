@@ -4,6 +4,7 @@ import { AuditService } from '../audit/audit.service';
 import { RequestMeta } from '../common/auth.decorators';
 import { BusinessRuleError, NotFoundError } from '../common/errors/app-exceptions';
 import { paginate, parseSort, skipTake } from '../common/pagination';
+import { MlClient } from '../ml/ml.client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AdminListServicesQuery, CreateServiceDto, ListServicesQuery, UpdateServiceDto } from './services.dto';
 
@@ -19,12 +20,15 @@ const SERVICE_SUMMARY = {
 } satisfies Prisma.ServiceSelect;
 
 const PUBLIC_SORT = ['nameKm', 'nameEn', 'lastVerifiedAt'] as const;
+/** Below this similarity a match is noise (shared character n-grams only). */
+const MIN_SIMILARITY = 0.05;
 
 @Injectable()
 export class ServicesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly ml: MlClient,
   ) {}
 
   // ─── Public ──────────────────────────────────────────────────────────────
@@ -121,11 +125,50 @@ export class ServicesService {
   }
 
   /**
+   * Search (ADR-005, Phase 7): the ML service's character n-gram ranker first, which
+   * was the best system in the Phase 6 evaluation; the database keyword search is the
+   * fallback whenever the ML service is not configured, slow or down.
+   */
+  async search(q: string) {
+    if (this.ml.enabled) {
+      const services = await this.prisma.service.findMany({
+        where: { publishStatus: 'PUBLISHED' },
+        select: {
+          ...SERVICE_SUMMARY,
+          responsibleBodyKm: true,
+          responsibleBodyEn: true,
+          requirements: { where: VERIFIED, select: { textKm: true, textEn: true } },
+          steps: { where: VERIFIED, select: { titleKm: true, titleEn: true } },
+          fees: { where: VERIFIED, select: { labelKm: true, labelEn: true } },
+        },
+      });
+      const candidates = services.map((s) => ({
+        id: s.id,
+        name: [s.nameKm, s.nameEn].filter(Boolean).join(' '),
+        text: [
+          s.summaryKm, s.summaryEn, s.responsibleBodyKm, s.responsibleBodyEn, s.category.nameKm, s.category.nameEn,
+          ...s.requirements.flatMap((r) => [r.textKm, r.textEn]),
+          ...s.steps.flatMap((r) => [r.titleKm, r.titleEn]),
+          ...s.fees.flatMap((r) => [r.labelKm, r.labelEn]),
+        ].filter(Boolean).join('\n'),
+      }));
+      const result = await this.ml.searchSimilar(q, candidates, 10);
+      if (result) {
+        const byId = new Map(services.map(({ requirements: _r, steps: _s, fees: _f, responsibleBodyKm: _bk, responsibleBodyEn: _be, ...s }) => [s.id, s]));
+        return result.results
+          .filter((r) => r.score >= MIN_SIMILARITY && byId.has(r.id))
+          .map((r) => ({ ...byId.get(r.id)!, score: Math.round(r.score * 1000) / 1000, matchedBy: 'similarity' as const }));
+      }
+    }
+    return this.keywordSearch(q);
+  }
+
+  /**
    * Keyword baseline search (ADR-005): trigram similarity on Khmer and English names
    * and on verified requirement text, plus substring matches. This is the baseline
    * that RQ4 compares ML similarity against.
    */
-  async search(q: string) {
+  async keywordSearch(q: string) {
     const rows = await this.prisma.$queryRaw<{ id: string; score: number }[]>`
       SELECT s.id,
              GREATEST(

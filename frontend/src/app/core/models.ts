@@ -106,7 +106,13 @@ export interface ServiceDetail extends ServiceSummary {
   locations: Location[];
   notStated: { field: GapField; appliesTo: string | null; checkedAt: string; source: SourceRef }[];
   sources: (SourceRef & { publisher: string; lastCheckedAt: string | null; relevance: string })[];
-  complexity: { score: number | null; modelVersion: string; output: unknown } | null;
+  complexity: { score: number | null; modelVersion: string; createdAt: string; output: ComplexityOutput } | null;
+}
+
+export type ComplexityFactorName = 'documents' | 'steps' | 'fee_tiers' | 'max_fee_khr' | 'conditions' | 'information_gaps';
+export interface ComplexityOutput {
+  factors: { name: ComplexityFactorName; cost: 'compliance' | 'learning'; contribution: number }[];
+  features: Record<ComplexityFactorName, number>;
 }
 
 export interface SearchHit extends ServiceSummary {

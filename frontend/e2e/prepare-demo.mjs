@@ -71,7 +71,10 @@ const { data: services } = await call('GET', '/admin/services?pageSize=50', null
 const dl = services.find((s) => s.slug === 'driver_license_ab');
 await call('PATCH', `/admin/services/${dl.id}`, { publishStatus: 'PUBLISHED', summaryKm: 'ប្រឡងយកបណ្ណបើកបរ ម៉ូតូ (ក) និងរថយន្ត (ខ)', summaryEn: 'Driving test for motorbike (A) and car (B) licenses' }, T);
 
-// 4. A demo citizen with a checklist and some feedback.
+// 4. Complexity scores from the verified content (needs the ML service; skipped if it is down).
+const complexity = await call('POST', '/admin/analytics/complexity/recompute', {}, T).catch(() => ({ data: { updated: 0, failed: 'ML unavailable' } }));
+
+// 5. A demo citizen with a checklist and some feedback.
 const citizenEmail = `demo-citizen-${Date.now()}@chlatvei.local`;
 const { data: reg } = await call('POST', '/auth/register', { email: citizenEmail, password: 'demo-citizen-pass-2026', displayName: 'Sokha' });
 const C = reg.accessToken;
@@ -82,4 +85,4 @@ const step1 = detail.steps[0]?.id;
 await call('POST', '/feedback', { serviceSlug: 'driver_license_ab', kind: 'RATING', rating: 4, difficulty: 3, outcome: 'IN_PROGRESS', confusingStepId: step1, comment: 'Demo feedback' }, C);
 await call('POST', '/feedback', { serviceSlug: 'driver_license_ab', kind: 'RATING', rating: 3, difficulty: 4 });
 
-console.log(JSON.stringify({ approved, remainingForThisService: queue.length - approved, checklist: list.id, citizenEmail }));
+console.log(JSON.stringify({ complexity: complexity.data, approved, remainingForThisService: queue.length - approved, checklist: list.id, citizenEmail }));

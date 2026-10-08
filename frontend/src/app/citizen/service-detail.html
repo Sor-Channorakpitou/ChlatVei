@@ -26,6 +26,22 @@
       </div>
     </header>
 
+    @if (s.complexity?.score != null) {
+      <aside class="analysis" aria-labelledby="cx-title">
+        <div class="analysis-head">
+          <h2 id="cx-title">{{ 'svc.complexity' | t }}</h2>
+          <span class="score">{{ 'svc.complexityScore' | t: { score: i18n.num(s.complexity!.score!), max: i18n.num(100) } }}</span>
+        </div>
+        <span class="meter" role="meter" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="s.complexity!.score"><i [style.width.%]="s.complexity!.score"></i></span>
+        @if (complexityReasons().length) {
+          <p class="muted">{{ 'svc.complexityMain' | t }}:
+            @for (f of complexityReasons(); track f.name; let last = $last) { {{ factorKey(f.name) | t }}@if (!last) {, } }
+          </p>
+        }
+        <p class="note">{{ 'svc.complexityNote' | t }}</p>
+      </aside>
+    }
+
     @if (eligibility().length || notStated('ELIGIBILITY')) {
       <section class="stack-sm">
         <h2>{{ 'svc.who' | t }}</h2>

@@ -76,7 +76,7 @@ Content fields come in pairs (`nameKm` / `nameEn`). The client chooses which to 
 | GET | `/services/:slug/requirements` | 🌐 | `kind` filter |
 | GET | `/services/:slug/steps` | 🌐 | |
 | GET | `/services/:slug/changes` | 🌐 | Public change history (`change_records`) |
-| GET | `/search?q=` | 🌐 | Ranked matches with `score` and `matchedBy` (`keyword` or `similarity`) |
+| GET | `/search?q=` | 🌐 | Ranked matches with `score` and `matchedBy`: `similarity` (ML service) or `keyword` (database fallback) |
 
 `GET /services/:slug` response (abridged):
 ```json
@@ -158,11 +158,11 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | PUT | `/admin/services/:id/sources/:sourceId` | 🛡️ | `{relevance}`: link a source |
 | DELETE | `/admin/services/:id/sources/:sourceId` | 🛡️ | Unlink a source |
 
-## Admin: extraction (Phase 7, not built yet)
+## Admin: extraction (Phase 7)
 
 | Method | Path | Access | Notes |
 |---|---|---|---|
-| POST | `/admin/extraction-jobs` | 🛡️ | `{snapshotId, serviceId}` → `202` with the job |
+| POST | `/admin/extraction-jobs` | 🛡️ | `{sourceId, serviceId, snapshotId?}` (latest snapshot if omitted; the source must be linked to the service) → the job with `status`, `itemsProposed`, `modelVersion`. Findings become `PENDING` / `EXTRACTED` rows in the review queue |
 | GET | `/admin/extraction-jobs/:id` | 🛡️ | Status and items proposed |
 
 ## Admin: users and analytics
@@ -173,7 +173,9 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | PATCH | `/admin/users/:id` | 🛡️ | `{role?, isActive?}`. An admin cannot demote or deactivate themselves (prevents lockout) |
 | GET | `/admin/analytics/overview` | 🛡️ | Counts: services by status/category, sources by status, pending reviews, outdated items, feedback this period |
 | GET | `/admin/analytics/feedback` | 🛡️ | Difficulty and rating by service, most-reported confusing steps (with Wilson CIs, RQ3) |
-| GET | `/admin/analytics/complexity` | 🛡️ | Score distribution and top factors (**Phase 7, not built yet**) |
+| GET | `/admin/analytics/complexity` | 🛡️ | Latest complexity score per service, with factors and model version |
+| POST | `/admin/analytics/complexity/recompute` | 🛡️ | Recomputes every published service → `{updated, failed}` |
+| POST | `/admin/services/:id/complexity` | 🛡️ | Recomputes one service from its verified content. `503` if the ML service is down |
 | GET | `/admin/audit-logs` | 🛡️ | Filters: `actor`, `action`, `from`, `to` |
 
 ## Internal: ML service (not exposed publicly)
@@ -181,8 +183,8 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | Method | Path | Body → Response |
 |---|---|---|
 | GET | `/health` | `{status, modelVersions}` |
-| POST | `/extract` | `{text, language}` → `{serviceName, requirements[], steps[], fees[], processingTime, locations[], confidence, modelVersion}` |
+| POST | `/extract` | `{text}` → `{fees[{amount, currency, text}], documents[], confidence, modelVersion}` (`text` is the verbatim quote) |
 | POST | `/predict-complexity` | `{features}` → `{score, factors[{name, contribution}], modelVersion}` |
-| POST | `/search/similar` | `{query, candidates[{id, text}], topK}` → `{results[{id, score}], modelVersion}` |
+| POST | `/search/similar` | `{query, candidates[{id, name, text}], topK}` → `{results[{id, score}], modelVersion}` |
 
-The ML service is stateless: the backend sends it what it needs, and only the backend writes to the database.
+The ML service is stateless: the backend sends it what it needs, and only the backend writes to the database. Optional header `X-Internal-Key` when `ML_API_KEY` is set. Guide: [docs/ml-integration](../ml-integration/README.md).

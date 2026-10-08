@@ -8,6 +8,7 @@ Any later ML or LLM extractor must beat these numbers on the same gold data.
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 import pandas as pd
@@ -15,7 +16,9 @@ import pandas as pd
 from .khmer import normalize
 
 # 30,000 Riels · 125,000 riels · ៣០០០០៛ · 180.000៛ · 95,000 ៛
-_AMOUNT = r"(\d{1,3}(?:[.,]\d{3})+|\d+)"
+# Latin or Khmer digits, matched on the ORIGINAL text so evidence stays a verbatim quote.
+_DIGIT = "[0-9០-៩]"
+_AMOUNT = rf"({_DIGIT}{{1,3}}(?:[.,]{_DIGIT}{{3}})+|{_DIGIT}+)"
 FEE_PATTERN = re.compile(_AMOUNT + r"\s*(riels?|៛|khr)", re.IGNORECASE)
 USD_PATTERN = re.compile(r"(?:\$\s*" + _AMOUNT + r"|" + _AMOUNT + r"\s*(?:usd|us\$|dollars?))", re.IGNORECASE)
 
@@ -33,12 +36,13 @@ class Extraction:
 
 
 def parse_amount(raw: str) -> int:
-    """'30,000' or '180.000' (Khmer pages use '.' as a thousands separator) → 30000 / 180000."""
-    return int(re.sub(r"[.,]", "", raw))
+    """'30,000', '180.000' or '៣០០០០' (Khmer pages use '.' as a thousands separator) → 30000 / 180000 / 30000."""
+    return int(re.sub(r"[.,]", "", raw).translate(str.maketrans("០១២៣៤៥៦៧៨៩", "0123456789")))
 
 
 def extract_fees(text: str) -> list[dict]:
-    text = normalize(text)  # also converts Khmer digits to 0-9
+    """Fee amounts with the exact source wording as `text` (used as evidence, so never normalized)."""
+    text = unicodedata.normalize("NFC", text)
     found: dict[tuple[int, str], dict] = {}
     for m in FEE_PATTERN.finditer(text):
         amount = parse_amount(m.group(1))

@@ -14,6 +14,7 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 - **Phase 4: Backend.** Done; see the [backend guide](docs/backend/README.md). 28 end-to-end tests cover the spec's citizen and admin flows.
 - **Phase 5: Frontend.** Done; see the [frontend guide](docs/frontend/README.md). Angular mobile-first PWA, Khmer first; browser tests cover the citizen and admin flows.
 - **Phase 6: Data science.** Done; see the [Phase 6 report](docs/data-science/phase6_report.md). Khmer-aware search beats keyword search (MRR 0.73 vs 0.45), there is an extraction baseline, and a complexity baseline with sensitivity analysis.
+- **Phase 7: ML integration.** Done; see the [ML integration guide](docs/ml-integration/README.md). The FastAPI ML service powers search, complexity and extraction, with fallbacks when it's down.
 - **Screens:** [design images](docs/design/README.md) and [screenshots of the real app](docs/design/app-screens).
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
@@ -23,7 +24,7 @@ See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and 
 ```text
 frontend/      Angular mobile-first PWA (citizen & admin UI)
 backend/       NestJS + TypeScript REST API (PostgreSQL)
-ml-service/    Python: chlatvei_ml package (search, extraction, complexity); FastAPI service in Phase 7
+ml-service/    Python FastAPI ML service + chlatvei_ml package (search, extraction, complexity)
 data/
   raw/         Original collected sources; never modified
   processed/   Cleaned / normalized datasets

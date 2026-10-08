@@ -9,3 +9,5 @@ process.env.DATABASE_URL = testUrl;
 process.env.NODE_ENV = 'test';
 process.env.RATE_LIMIT_ENABLED = 'false';
 process.env.JWT_ACCESS_SECRET ??= 'test-secret-that-is-long-enough-for-validation-0123456789';
+// Extraction jobs read source text from DATA_DIR; tests use a throwaway folder, never the repo's data.
+process.env.DATA_DIR = require('path').join(require('os').tmpdir(), 'chlatvei-e2e-data');

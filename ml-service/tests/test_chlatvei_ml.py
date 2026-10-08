@@ -75,7 +75,7 @@ def test_bootstrap_difference_is_zero_for_identical_systems():
 # ─── Extraction ────────────────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("raw,expected", [("30,000", 30000), ("180.000", 180000), ("95000", 95000)])
+@pytest.mark.parametrize("raw,expected", [("30,000", 30000), ("180.000", 180000), ("95000", 95000), ("៣០០០០", 30000)])
 def test_parse_amount(raw, expected):
     assert parse_amount(raw) == expected
 
@@ -84,6 +84,14 @@ def test_extract_fees_handles_english_and_khmer_formats():
     text = 'A "motorbike" 30,000 Riels\nតម្លៃ ៣០០០០៛ ។ ចំពោះតម្លៃ ១៨០.០០០៛\nVisa fee $36'
     fees = {(f["amount"], f["currency"]) for f in extract_fees(text)}
     assert fees == {(30000, "KHR"), (180000, "KHR"), (36, "USD")}
+
+
+def test_extracted_fee_evidence_is_a_verbatim_quote():
+    text = "ចំពោះតម្លៃ ១៨០.០០០៛ and 30,000 Riels"
+    fees = extract_fees(text)
+    assert {f["amount"] for f in fees} == {180000, 30000}
+    for f in fees:
+        assert f["text"] in text  # evidence must appear exactly as written on the page
 
 
 def test_extract_documents_reads_the_list_after_a_heading():

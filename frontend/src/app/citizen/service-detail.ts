@@ -5,7 +5,8 @@ import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { Api } from '../core/api';
 import { AuthService, errorMessage } from '../core/auth';
 import { I18n, TPipe } from '../core/i18n';
-import { GapField, ServiceDetail } from '../core/models';
+import { ComplexityFactorName, GapField, ServiceDetail } from '../core/models';
+import { MessageKey } from '../core/messages';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error' } | { state: 'ready'; svc: ServiceDetail };
 
@@ -41,6 +42,15 @@ export class ServiceDetailPage {
   protected readonly eligibility = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'ELIGIBILITY') ?? []);
   protected readonly documents = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'DOCUMENT') ?? []);
   protected readonly conditions = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'CONDITION') ?? []);
+
+  /** Top factors that actually contribute, largest first (the API already sorts them). */
+  protected readonly complexityReasons = computed(() =>
+    (this.svc()?.complexity?.output?.factors ?? []).filter((f) => f.contribution > 0).slice(0, 3),
+  );
+
+  protected factorKey(name: ComplexityFactorName): MessageKey {
+    return `cx.${name}` as MessageKey;
+  }
 
   protected readonly busy = signal(false);
   protected readonly actionError = signal<string | null>(null);
