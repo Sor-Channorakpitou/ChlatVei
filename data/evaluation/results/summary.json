@@ -1,0 +1,84 @@
+{
+  "queries": 62,
+  "queries_by_language": {
+    "en": 37,
+    "km": 23,
+    "mixed": 2
+  },
+  "search_best_overall": {
+    "ranker": "tf-idf char 2-4, names 50% + content 50%",
+    "mrr": 0.728
+  },
+  "search_mrr": {
+    "keyword (baseline)": {
+      "all": 0.454,
+      "en": 0.563,
+      "km": 0.233,
+      "mixed": 1.0
+    },
+    "tf-idf char 2-4": {
+      "all": 0.565,
+      "en": 0.519,
+      "km": 0.601,
+      "mixed": 1.0
+    },
+    "tf-idf char 2-4, names 50% + content 50%": {
+      "all": 0.728,
+      "en": 0.827,
+      "km": 0.544,
+      "mixed": 1.0
+    },
+    "tf-idf char 2-4, names only": {
+      "all": 0.596,
+      "en": 0.809,
+      "km": 0.217,
+      "mixed": 1.0
+    },
+    "tf-idf word": {
+      "all": 0.643,
+      "en": 0.692,
+      "km": 0.533,
+      "mixed": 1.0
+    }
+  },
+  "extraction": [
+    {
+      "source_id": "S001",
+      "split": "development",
+      "field": "fee",
+      "precision": 0.556,
+      "recall": 1.0,
+      "f1": 0.714
+    },
+    {
+      "source_id": "S001",
+      "split": "development",
+      "field": "required_document",
+      "precision": 0.667,
+      "recall": 0.889,
+      "f1": 0.762
+    },
+    {
+      "source_id": "S003",
+      "split": "held-out",
+      "field": "fee",
+      "precision": 0.143,
+      "recall": 1.0,
+      "f1": 0.25
+    },
+    {
+      "source_id": "S003",
+      "split": "held-out",
+      "field": "required_document",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  ],
+  "complexity_scores": {
+    "driver_license_ab": 34.8,
+    "driver_license_exchange": 25.1,
+    "vehicle_registration": 21.7
+  },
+  "complexity_same_order_share": 0.515
+}

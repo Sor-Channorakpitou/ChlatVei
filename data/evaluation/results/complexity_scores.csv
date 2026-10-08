@@ -1,0 +1,4 @@
+service_slug,score,part_documents,part_steps,part_fee_tiers,part_max_fee_khr,part_conditions,part_information_gaps,main_contributors,documents,steps,fee_tiers,max_fee_khr,conditions,information_gaps
+driver_license_ab,34.8,5.0,5.0,11.1,3.0,8.3,2.4,"Many different fees, Many conditions to understand, Many required documents",3,3,4,180000.0,3,1
+driver_license_exchange,25.1,10.0,0.0,2.8,2.0,5.6,4.8,"Many required documents, Many conditions to understand, Official information is incomplete",6,0,1,120000.0,2,2
+vehicle_registration,21.7,6.7,5.0,5.6,2.1,0.0,2.4,"Many required documents, Many different fees, Many steps",4,3,2,125000.0,0,1

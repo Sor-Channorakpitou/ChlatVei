@@ -1,0 +1,70 @@
+{
+  "tf-idf word": {
+    "all": {
+      "mrr_diff": 0.189,
+      "ci_low": 0.086,
+      "ci_high": 0.296
+    },
+    "km": {
+      "mrr_diff": 0.3,
+      "ci_low": 0.09,
+      "ci_high": 0.51
+    },
+    "en": {
+      "mrr_diff": 0.13,
+      "ci_low": 0.007,
+      "ci_high": 0.245
+    }
+  },
+  "tf-idf char 2-4": {
+    "all": {
+      "mrr_diff": 0.111,
+      "ci_low": 0.005,
+      "ci_high": 0.221
+    },
+    "km": {
+      "mrr_diff": 0.369,
+      "ci_low": 0.211,
+      "ci_high": 0.54
+    },
+    "en": {
+      "mrr_diff": -0.044,
+      "ci_low": -0.158,
+      "ci_high": 0.075
+    }
+  },
+  "tf-idf char 2-4, names only": {
+    "all": {
+      "mrr_diff": 0.141,
+      "ci_low": 0.032,
+      "ci_high": 0.252
+    },
+    "km": {
+      "mrr_diff": -0.015,
+      "ci_low": -0.152,
+      "ci_high": 0.117
+    },
+    "en": {
+      "mrr_diff": 0.246,
+      "ci_low": 0.095,
+      "ci_high": 0.389
+    }
+  },
+  "tf-idf char 2-4, names 50% + content 50%": {
+    "all": {
+      "mrr_diff": 0.274,
+      "ci_low": 0.169,
+      "ci_high": 0.381
+    },
+    "km": {
+      "mrr_diff": 0.312,
+      "ci_low": 0.19,
+      "ci_high": 0.442
+    },
+    "en": {
+      "mrr_diff": 0.265,
+      "ci_low": 0.106,
+      "ci_high": 0.409
+    }
+  }
+}
