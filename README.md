@@ -12,14 +12,14 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 - **Phase 2: Data.** In progress; see the [Phase 2 report](docs/data/phase2_report.md), [collection methodology](docs/data/collection_methodology.md) and [data dictionary](data/metadata/data_dictionary.md).
 - **Phase 3: Architecture.** Done; see [docs/architecture](docs/architecture/README.md): system design, data model, API spec, auth, and ADRs.
 - **Phase 4: Backend.** Done; see the [backend guide](docs/backend/README.md). 28 end-to-end tests cover the spec's citizen and admin flows.
-- **UI prototype:** [docs/design](docs/design/README.md) (design reference for Phase 5).
+- **Screen designs:** [docs/design](docs/design/README.md): screen images, the design reference for Phase 5.
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
 
 ## Repository layout
 
 ```text
-frontend/      React + TypeScript + Tailwind (citizen & admin UI)
+frontend/      Angular mobile-first PWA (citizen & admin UI)
 backend/       NestJS + TypeScript REST API (PostgreSQL)
 ml-service/    Python FastAPI service (extraction, complexity, similarity)
 data/

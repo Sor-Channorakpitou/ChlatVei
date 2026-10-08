@@ -17,6 +17,7 @@
 | [003](decisions/ADR-003-versioned-verified-content.md) | Content is versioned per item; only `VERIFIED` rows are public |
 | [004](decisions/ADR-004-jwt-auth.md) | Short-lived JWT access token and rotating refresh token in an httpOnly cookie |
 | [005](decisions/ADR-005-search.md) | Search starts with PostgreSQL; ML similarity is added behind the same endpoint in Phase 7 |
+| [006](decisions/ADR-006-angular-pwa-frontend.md) | Angular mobile-first PWA frontend (replaces React from the original spec) |
 
 ## Design drivers (from the spec and Phase 1–2 findings)
 

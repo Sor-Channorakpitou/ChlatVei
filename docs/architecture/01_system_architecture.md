@@ -5,7 +5,7 @@
 ```mermaid
 flowchart LR
     subgraph Client
-        FE["Frontend<br/>React + TS + Tailwind<br/>(citizen and admin UI)"]
+        FE["Frontend<br/>Angular PWA, mobile first<br/>(citizen and admin UI)"]
     end
     subgraph Server
         API["Backend API<br/>NestJS + TS<br/>(business logic, auth, RBAC)"]
