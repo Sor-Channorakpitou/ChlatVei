@@ -10,6 +10,7 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 
 - **Phase 1: Research.** Done; see [docs/research](docs/research/README.md).
 - **Phase 2: Data.** In progress; see the [Phase 2 report](docs/data/phase2_report.md), [collection methodology](docs/data/collection_methodology.md) and [data dictionary](data/metadata/data_dictionary.md).
+- **Phase 3: Architecture.** Drafted; see [docs/architecture](docs/architecture/README.md): system design, data model, API spec, auth, and ADRs.
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
 
