@@ -163,6 +163,20 @@
       }
     </section>
 
+    @if (changes().length) {
+      <details class="changes">
+        <summary>{{ 'svc.changes' | t }} ({{ i18n.num(changes().length) }})</summary>
+        <ul class="items">
+          @for (c of changes().slice(0, 10); track c.id) {
+            <li>
+              <span [class]="c.changeType === 'REMOVED' ? 'badge b-bad' : c.changeType === 'CHANGED' ? 'badge b-warn' : 'badge b-ok'">{{ changeKey(c) | t }}</span>
+              <span>{{ i18n.pick(c.summaryKm, c.summaryEn) }} <span class="muted">· {{ i18n.date(c.createdAt) }}</span></span>
+            </li>
+          }
+        </ul>
+      </details>
+    }
+
     @if (actionError()) { <p class="error" role="alert">{{ actionError() }}</p> }
 
     <div class="stack-sm">

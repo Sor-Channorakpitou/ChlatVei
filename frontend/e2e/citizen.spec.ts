@@ -19,7 +19,7 @@ test('citizen finds a service, completes a checklist and gives feedback', async 
 
   // Service detail: verified content, the source, and "not stated" for processing time.
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('ផ្តល់បណ្ណបើកបរ');
-  await expect(page.getByText('វិញ្ញាបនបត្របញ្ជាក់កាយសម្បទា')).toBeVisible();
+  await expect(page.getByText('វិញ្ញាបនបត្របញ្ជាក់កាយសម្បទា').first()).toBeVisible();
   await expect(page.getByText('30,000 ៛').first()).toBeVisible();
   await expect(page.getByText('ប្រភពផ្លូវការមិនបានបញ្ជាក់')).toBeVisible();
   await expect(page.getByRole('link', { name: "Driver's License (Khmer)" })).toBeVisible();
@@ -30,7 +30,7 @@ test('citizen finds a service, completes a checklist and gives feedback', async 
 
   // English switch.
   await page.getByRole('button', { name: 'EN' }).click();
-  await expect(page.getByText('Physical fitness (medical) certificate')).toBeVisible();
+  await expect(page.getByText('Physical fitness (medical) certificate').first()).toBeVisible();
   await expect(page.getByText('Not stated by official sources')).toBeVisible();
   await shot(page, '03-service-detail-en');
   await page.getByRole('button', { name: 'ខ្មែរ' }).click();

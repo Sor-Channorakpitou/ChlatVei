@@ -10,11 +10,13 @@ import { TPipe } from '../core/i18n';
       <a routerLink="review" routerLinkActive="on">{{ 'nav.review' | t }}</a>
       <a routerLink="dashboard" routerLinkActive="on">{{ 'nav.dashboard' | t }}</a>
       <a routerLink="sources" routerLinkActive="on">{{ 'nav.sources' | t }}</a>
+      <a routerLink="feedback" routerLinkActive="on">{{ 'nav.feedback' | t }}</a>
+      <a routerLink="users" routerLinkActive="on">{{ 'nav.users' | t }}</a>
     </nav>
     <router-outlet />
   `,
   styles: `
-    .tabs { display: inline-flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; margin-bottom: 16px; }
+    .tabs { display: flex; flex-wrap: wrap; max-width: 100%; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; margin-bottom: 16px; }
     .tabs a { padding: 6px 14px; border-radius: 999px; text-decoration: none; color: var(--ink-soft); font-size: 14px; }
     .tabs a.on { background: var(--accent); color: var(--on-accent); }
   `,

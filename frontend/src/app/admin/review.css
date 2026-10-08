@@ -20,3 +20,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .replaces { border-top: 1px dashed var(--line); padding-top: 8px; }
 .nowrap { flex-wrap: nowrap; }
 .nowrap input { flex: 1; min-width: 0; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 10px; font-size: 13px; }
+.chip[aria-pressed='true'] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.extracted { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 13px; color: var(--ink-soft); }

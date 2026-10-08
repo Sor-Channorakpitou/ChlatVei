@@ -187,3 +187,63 @@ export interface FeedbackAnalytics {
   }[];
   note: string;
 }
+
+// ─── Phase 8: admin intelligence ─────────────────────────────────────────
+
+export interface SourceDetail extends Source {
+  snapshots: { id: string; collectedAt: string; sha256: string; contentType: string | null; bytes: number | null; storagePath: string }[];
+  services: { relevance: string; service: { id: string; slug: string; nameKm: string | null; nameEn: string | null } }[];
+}
+
+export interface ExtractionJob {
+  id: string;
+  status: 'QUEUED' | 'RUNNING' | 'SUCCEEDED' | 'FAILED';
+  itemsProposed: number;
+  modelVersion: string | null;
+  error: string | null;
+  finishedAt: string | null;
+}
+
+export type FeedbackKind = 'RATING' | 'REPORT_UNCLEAR' | 'REPORT_OUTDATED';
+export type FeedbackStatus = 'OPEN' | 'RESOLVED' | 'DISMISSED';
+export interface FeedbackItem {
+  id: string;
+  kind: FeedbackKind;
+  rating: number | null;
+  difficulty: number | null;
+  foundNeeded: boolean | null;
+  outcome: string | null;
+  comment: string | null;
+  status: FeedbackStatus;
+  createdAt: string;
+  service: { slug: string; nameKm: string | null; nameEn: string | null };
+  confusingStep: { id: string; position: number; titleKm: string | null; titleEn: string | null } | null;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  displayName: string;
+  role: Role;
+  preferredLanguage: Lang;
+  isActive: boolean;
+  lastLoginAt: string | null;
+  createdAt: string;
+}
+
+export interface ComplexityRow {
+  service: { id: string; slug: string; nameKm: string | null; nameEn: string | null; publishStatus: string };
+  score: number | null;
+  modelVersion: string;
+  output: ComplexityOutput;
+  createdAt: string;
+}
+
+export interface ChangeRecord {
+  id: string;
+  entityType: string;
+  changeType: 'ADDED' | 'CHANGED' | 'REMOVED';
+  summaryKm: string | null;
+  summaryEn: string | null;
+  createdAt: string;
+}

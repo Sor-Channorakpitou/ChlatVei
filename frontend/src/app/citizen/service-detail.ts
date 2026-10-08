@@ -5,7 +5,7 @@ import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import { Api } from '../core/api';
 import { AuthService, errorMessage } from '../core/auth';
 import { I18n, TPipe } from '../core/i18n';
-import { ComplexityFactorName, GapField, ServiceDetail } from '../core/models';
+import { ChangeRecord, ComplexityFactorName, GapField, ServiceDetail } from '../core/models';
 import { MessageKey } from '../core/messages';
 
 type Load = { state: 'loading' } | { state: 'missing' } | { state: 'error' } | { state: 'ready'; svc: ServiceDetail };
@@ -39,6 +39,16 @@ export class ServiceDetailPage {
   );
 
   protected readonly svc = computed(() => { const l = this.load(); return l.state === 'ready' ? l.svc : null; });
+
+  /** Public history of what changed in this service's information (verified content is never silently overwritten). */
+  protected readonly changes = toSignal(
+    toObservable(this.slug).pipe(switchMap((slug) => this.api.changes(slug).pipe(catchError(() => of([] as ChangeRecord[]))))),
+    { initialValue: [] as ChangeRecord[] },
+  );
+
+  protected changeKey(c: ChangeRecord): MessageKey {
+    return `svc.change.${c.changeType}` as MessageKey;
+  }
   protected readonly eligibility = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'ELIGIBILITY') ?? []);
   protected readonly documents = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'DOCUMENT') ?? []);
   protected readonly conditions = computed(() => this.svc()?.requirements.filter((r) => r.kind === 'CONDITION') ?? []);

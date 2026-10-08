@@ -96,8 +96,8 @@ Browser tests change data (they approve items), so they run against a separate *
 export E2E_ADMIN_PASSWORD='a-demo-password-123'
 bash frontend/e2e/reset-demo.sh                     # drops and rebuilds chlatvei_demo only
 
-# 2. Start the backend against the demo DB
-cd backend && DATABASE_URL=postgresql://chlatvei:chlatvei_dev@localhost:55432/chlatvei_demo npm run start
+# 2. Start the backend against the demo DB (rate limiting off: the tests sign in many times a minute)
+cd backend && RATE_LIMIT_ENABLED=false DATABASE_URL=postgresql://chlatvei:chlatvei_dev@localhost:55432/chlatvei_demo ML_SERVICE_URL=http://localhost:8000 npm run start
 
 # 3. In another terminal: approve the driver's-license items through the API, then test
 node frontend/e2e/prepare-demo.mjs

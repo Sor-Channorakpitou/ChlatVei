@@ -18,7 +18,7 @@ export default defineConfig({
   },
   projects: [
     { name: 'citizen-mobile', testMatch: /citizen\.spec\.ts/, use: { ...devices['Pixel 7'], channel: 'chrome' } },
-    { name: 'admin-desktop', testMatch: /admin\.spec\.ts/, use: { viewport: { width: 1280, height: 860 } } },
+    { name: 'admin-desktop', testMatch: /admin.*\.spec\.ts/, use: { viewport: { width: 1280, height: 860 } } },
   ],
   webServer: {
     command: 'npx ng serve --port 4200',
