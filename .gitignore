@@ -40,3 +40,7 @@ Thumbs.db
 
 # Angular build cache
 .angular/
+
+# Playwright output
+frontend/test-results/
+frontend/playwright-report/

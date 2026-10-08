@@ -1,0 +1,7 @@
+.back { font-size: 14px; text-decoration: none; }
+.h-count { display: flex; justify-content: space-between; align-items: baseline; }
+.table-wrap { overflow-x: auto; }
+.strong { font-weight: 600; }
+.src { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; }
+.center { text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+ol.items { padding: 0; }

@@ -1,5 +1,7 @@
 # Screen Designs
 
+> The app is now built. Screenshots of the **real** app, taken by the browser tests, are in [`app-screens/`](app-screens). The images below were the design reference.
+
 Static images of the main screens. They are the visual reference for the Angular frontend (Phase 5, [ADR-006](../architecture/decisions/ADR-006-angular-pwa-frontend.md)).
 
 | Image | Screen |
