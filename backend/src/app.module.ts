@@ -27,7 +27,7 @@ import { VerificationModule } from './verification/verification.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>('JWT_ACCESS_SECRET'),
-        signOptions: { expiresIn: config.get('JWT_ACCESS_TTL', '15m') },
+        signOptions: { expiresIn: config.get('JWT_ACCESS_TTL', '15m'), algorithm: 'HS256' },
       }),
     }),
     // Global default: 100 requests per minute per IP. Stricter limits on auth and feedback routes.

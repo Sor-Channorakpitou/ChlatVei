@@ -37,6 +37,14 @@ export class EnvironmentVariables {
   @IsBoolean()
   REQUIRE_DIFFERENT_APPROVER = false;
 
+  /**
+   * Set true ONLY when running behind a reverse proxy (nginx in Docker). Otherwise clients could
+   * fake their IP with an X-Forwarded-For header and bypass rate limits.
+   */
+  @Transform(({ value }) => value === true || value === 'true')
+  @IsBoolean()
+  TRUST_PROXY = false;
+
   /** Only for automated tests, which send many requests from one IP. */
   @Transform(({ value }) => value === undefined || value === true || value === 'true')
   @IsBoolean()

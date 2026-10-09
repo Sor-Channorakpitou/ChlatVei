@@ -168,7 +168,9 @@ export class ServicesService {
    * and on verified requirement text, plus substring matches. This is the baseline
    * that RQ4 compares ML similarity against.
    */
-  async keywordSearch(q: string) {
+  async keywordSearch(raw: string) {
+    // Treat % and _ typed by users as literal characters, not LIKE wildcards.
+    const q = raw.replace(/[\\%_]/g, (c) => `\\${c}`);
     const rows = await this.prisma.$queryRaw<{ id: string; score: number }[]>`
       SELECT s.id,
              GREATEST(

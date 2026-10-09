@@ -28,6 +28,9 @@ export function configureApp(app: INestApplication): void {
   );
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Behind a reverse proxy (nginx in Phase 10) so req.ip is the client, not the proxy.
-  (app.getHttpAdapter().getInstance() as { set: (k: string, v: unknown) => void }).set('trust proxy', 1);
+  // Behind a reverse proxy (nginx, Phase 10) req.ip must come from X-Forwarded-For; without one,
+  // trusting that header would let clients fake their IP and dodge rate limits.
+  if (config.get<boolean>('TRUST_PROXY')) {
+    (app.getHttpAdapter().getInstance() as { set: (k: string, v: unknown) => void }).set('trust proxy', 1);
+  }
 }

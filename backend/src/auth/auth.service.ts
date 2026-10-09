@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User } from '@prisma/client';
 import { createHash, randomBytes, randomUUID } from 'crypto';
-import { ConflictError, UnauthenticatedError } from '../common/errors/app-exceptions';
+import { AppException, ConflictError, UnauthenticatedError } from '../common/errors/app-exceptions';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto, RegisterDto } from './auth.dto';
 import { assertAcceptablePassword, hashPassword, verifyPassword } from './password';
@@ -30,6 +30,16 @@ export function toPublicUser(u: User): PublicUser {
 }
 
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+
+/** Per-account brute-force protection (the IP rate limit alone can be spread across many IPs). */
+export const MAX_FAILED_LOGINS = 10;
+export const LOCK_MINUTES = 15;
+
+class AccountLockedError extends AppException {
+  constructor() {
+    super(429, 'RATE_LIMITED', `Too many failed sign-in attempts. Try again in ${LOCK_MINUTES} minutes.`);
+  }
+}
 
 /**
  * Auth flow (ADR-004): short-lived JWT access token + opaque refresh token that is
@@ -68,10 +78,23 @@ export class AuthService {
       await verifyPassword(await dummyHash, dto.password);
       throw new UnauthenticatedError('Invalid email or password');
     }
+    if (user.lockedUntil && user.lockedUntil > new Date()) throw new AccountLockedError();
     if (!(await verifyPassword(user.passwordHash, dto.password))) {
+      const failed = user.failedLogins + 1;
+      const lock = failed >= MAX_FAILED_LOGINS;
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: lock
+          ? { failedLogins: 0, lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60_000) }
+          : { failedLogins: failed },
+      });
+      if (lock) throw new AccountLockedError();
       throw new UnauthenticatedError('Invalid email or password');
     }
-    const updated = await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date(), failedLogins: 0, lockedUntil: null },
+    });
     return { user: toPublicUser(updated), ...(await this.issueTokens(updated)) };
   }
 
