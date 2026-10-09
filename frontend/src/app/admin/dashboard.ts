@@ -2,7 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { catchError, forkJoin, of } from 'rxjs';
 import { Api } from '../core/api';
 import { I18n, TPipe } from '../core/i18n';
-import { FeedbackAnalytics, Overview } from '../core/models';
+import { MessageKey } from '../core/messages';
+import { ComplexityRow, FeedbackAnalytics, Overview } from '../core/models';
 
 /**
  * Admin dashboard (spec §23). Each block answers one question:
@@ -65,6 +66,22 @@ import { FeedbackAnalytics, Overview } from '../core/models';
           </section>
 
           <section class="card stack-sm">
+            <div class="row between">
+              <h2>{{ 'adm.complexity' | t }}</h2>
+              <button type="button" class="btn ghost small" [disabled]="recomputing()" (click)="recompute()">{{ 'adm.recompute' | t }}</button>
+            </div>
+            @if (complexityMessage()) { <p class="toast" role="status">{{ complexityMessage() }}</p> }
+            @for (c of complexity(); track c.service.id) {
+              <div class="bar">
+                <span>{{ i18n.pick(c.service.nameKm, c.service.nameEn) }}<br /><span class="muted">{{ topFactor(c) }}</span></span>
+                <span class="track"><i class="gold" [style.width.%]="c.score ?? 0"></i></span>
+                <span class="n">{{ c.score?.toFixed(0) }}</span>
+              </div>
+            } @empty { <p class="muted">{{ 'adm.noComplexity' | t }}</p> }
+            @if (complexity().length) { <p class="muted">{{ complexity()[0].modelVersion }}</p> }
+          </section>
+
+          <section class="card stack-sm">
             <h2>{{ 'adm.recent' | t }}</h2>
             @for (r of o.recentChanges; track r.id) {
               <p class="change">
@@ -91,6 +108,9 @@ import { FeedbackAnalytics, Overview } from '../core/models';
     .track, .ci { position: relative; height: 12px; background: var(--paper); border-radius: 999px; border: 1px solid var(--line); overflow: hidden; display: block; }
     .track i { display: block; height: 100%; background: var(--accent); }
     .track i.warn { background: var(--warn); }
+    .track i.gold { background: var(--gold); }
+    .between { justify-content: space-between; }
+    .small { min-height: 36px; padding: 6px 12px; font-size: 13px; }
     .ci .rng { position: absolute; top: 3px; height: 4px; background: var(--warn); opacity: .5; border-radius: 999px; }
     .ci .pt { position: absolute; top: 1px; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); transform: translateX(-4px); }
     .n { text-align: right; font-variant-numeric: tabular-nums; }
@@ -104,6 +124,9 @@ export class DashboardPage {
   protected readonly overview = signal<Overview | null>(null);
   protected readonly feedback = signal<FeedbackAnalytics | null>(null);
   protected readonly error = signal(false);
+  protected readonly complexity = signal<ComplexityRow[]>([]);
+  protected readonly recomputing = signal(false);
+  protected readonly complexityMessage = signal<string | null>(null);
 
   protected readonly totalServices = computed(() => Object.values(this.overview()?.services.byStatus ?? {}).reduce((a: number, b) => a + (b ?? 0), 0));
   protected readonly totalSources = computed(() => Object.values(this.overview()?.sources ?? {}).reduce((a: number, b) => a + (b ?? 0), 0));
@@ -120,5 +143,30 @@ export class DashboardPage {
       },
       error: () => this.error.set(true),
     });
+    this.loadComplexity();
+  }
+
+  protected topFactor(c: ComplexityRow): string {
+    const f = c.output?.factors?.find((x) => x.contribution > 0);
+    return f ? this.i18n.t(`cx.${f.name}` as MessageKey) : '';
+  }
+
+  protected recompute(): void {
+    this.recomputing.set(true);
+    this.api.recomputeComplexity().subscribe({
+      next: (r) => {
+        this.complexityMessage.set(this.i18n.t('adm.recomputed', { n: r.updated }));
+        this.recomputing.set(false);
+        this.loadComplexity();
+      },
+      error: () => {
+        this.complexityMessage.set(this.i18n.t('gen.error'));
+        this.recomputing.set(false);
+      },
+    });
+  }
+
+  private loadComplexity(): void {
+    this.api.complexity().pipe(catchError(() => of([] as ComplexityRow[]))).subscribe((rows) => this.complexity.set(rows));
   }
 }

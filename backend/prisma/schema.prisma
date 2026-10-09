@@ -157,6 +157,9 @@ model User {
   preferredLanguage Language  @default(km) @map("preferred_language")
   isActive          Boolean   @default(true) @map("is_active")
   lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  /// Failed sign-ins since the last success; 10 in a row locks the account for 15 minutes.
+  failedLogins      Int       @default(0) @map("failed_logins")
+  lockedUntil       DateTime? @map("locked_until") @db.Timestamptz
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 

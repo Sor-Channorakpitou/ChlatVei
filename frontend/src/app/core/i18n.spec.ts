@@ -53,5 +53,8 @@ describe('I18n dates', () => {
     expect(i18n.date('2026-10-08T12:00:00Z')).toBe('៨ តុលា ២០២៦');
     i18n.set('en');
     expect(i18n.date('2026-10-08T12:00:00Z')).toBe('8 October 2026');
+    expect(i18n.num(37.6)).toBe('38');
+    i18n.set('km');
+    expect(i18n.num(37.6)).toBe('៣៨');
   });
 });

@@ -1,0 +1,63 @@
+query,language,kind,expected_service
+លិខិតឆ្លងដែន,km,official_term,passport_new
+ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new
+passport,en,keyword,passport_new
+how do I get a passport,en,phrase,passport_new
+pasport application,en,typo,passport_new
+បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal
+renew my passport,en,phrase,passport_renewal
+passport expired,en,phrase,passport_renewal
+អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card
+ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card
+khmer national id card,en,keyword,national_id_card
+lost my ID card,en,phrase,national_id_card
+សំបុត្រកំណើត,km,official_term,birth_registration
+ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration
+birth certificate,en,keyword,birth_registration
+register my newborn baby,en,phrase,birth_registration
+ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration
+late birth registration,en,official_term,late_birth_registration
+birth certificate after 30 days,en,phrase,late_birth_registration
+សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration
+ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration
+marriage certificate,en,keyword,marriage_registration
+we want to get married officially,en,phrase,marriage_registration
+សំបុត្រមរណភាព,km,official_term,death_registration
+death certificate,en,keyword,death_registration
+register a death in the family,en,phrase,death_registration
+កែសំបុត្រកំណើត,km,phrase,civil_record_correction
+correct my name on birth certificate,en,phrase,civil_record_correction
+fix a mistake in civil status record,en,phrase,civil_record_correction
+បណ្ណបើកបរ,km,official_term,driver_license_ab
+ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab
+បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab
+driving license,en,keyword,driver_license_ab
+motorbike licence,en,variant_spelling,driver_license_ab
+how to take the driving test,en,phrase,driver_license_ab
+driver licence type B car,en,phrase,driver_license_ab
+ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange
+convert foreign driving license,en,phrase,driver_license_exchange
+exchange my international driving permit,en,phrase,driver_license_exchange
+foreigner change license to Cambodian license,en,phrase,driver_license_exchange
+ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration
+ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration
+ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration
+register my car,en,phrase,vehicle_registration
+number plate for motorcycle,en,phrase,vehicle_registration
+vehicle registration fee,en,keyword,vehicle_registration
+ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration
+register a company,en,phrase,company_registration
+incorporate a business in Cambodia,en,phrase,company_registration
+company registration online,en,keyword,company_registration
+ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration
+sole proprietorship,en,official_term,sole_proprietorship_registration
+register my small shop,en,phrase,sole_proprietorship_registration
+ទិដ្ឋាការ,km,official_term,tourist_evisa
+tourist visa,en,keyword,tourist_evisa
+apply e-visa online,en,phrase,tourist_evisa
+visa to visit Cambodia,en,phrase,tourist_evisa
+ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services
+one window service office,en,official_term,owso_district_services
+district administration services,en,phrase,owso_district_services
+license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab
+passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal

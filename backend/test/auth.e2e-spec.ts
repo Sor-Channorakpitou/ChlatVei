@@ -98,6 +98,28 @@ describe('Auth', () => {
     await http().post('/api/auth/refresh').set('Cookie', cookie).expect(401);
   });
 
+  it('locks an account for 15 minutes after 10 failed sign-ins, even with the right password', async () => {
+    await register(valid).expect(201);
+    for (let i = 0; i < 9; i++) {
+      await http().post('/api/auth/login').send({ email: valid.email, password: 'wrong-password-1' }).expect(401);
+    }
+    const locked = await http().post('/api/auth/login').send({ email: valid.email, password: 'wrong-password-1' }).expect(429);
+    expect(locked.body.error.code).toBe('RATE_LIMITED');
+    await http().post('/api/auth/login').send({ email: valid.email, password: valid.password }).expect(429);
+
+    // After the lock expires, a correct password works and resets the counter.
+    await prisma.user.update({ where: { email: 'dara@example.test' }, data: { lockedUntil: new Date(Date.now() - 1000) } });
+    await http().post('/api/auth/login').send({ email: valid.email, password: valid.password }).expect(200);
+    expect((await prisma.user.findUniqueOrThrow({ where: { email: 'dara@example.test' } })).failedLogins).toBe(0);
+  });
+
+  it('rejects unsigned tokens (alg "none")', async () => {
+    const reg = await register(valid).expect(201);
+    const [, payload] = reg.body.data.accessToken.split('.');
+    const unsigned = `${Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url')}.${payload}.`;
+    await http().get('/api/users/me').set(bearer(unsigned)).expect(401);
+  });
+
   it('updates own profile but ignores attempts to change role', async () => {
     const reg = await register(valid).expect(201);
     const token = reg.body.data.accessToken;

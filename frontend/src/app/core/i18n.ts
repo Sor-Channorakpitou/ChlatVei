@@ -75,6 +75,12 @@ export class I18n {
     return `${khmerDigits(d.getDate())} ${KHMER_MONTHS[d.getMonth()]} ${khmerDigits(d.getFullYear())}`;
   }
 
+  /** Whole numbers in the current language's digits (Khmer digits in Khmer mode). */
+  num(n: number): string {
+    const s = String(Math.round(n));
+    return this.lang() === 'km' ? s.replace(/\d/g, (c) => khmerDigits(Number(c))) : s;
+  }
+
   /** English-only annotations (e.g. "applies to") are shown only in English mode. */
   englishOnly(text: string | null | undefined): string | null {
     return this.lang() === 'en' && text ? text : null;

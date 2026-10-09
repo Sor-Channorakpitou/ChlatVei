@@ -1,13 +1,22 @@
-# Local development services. Phase 10 adds frontend, backend and ml-service.
+# ChlatVei: the whole stack.
+#
+#   Development (database only):  docker compose up -d postgres
+#   Full stack:                    cp .env.example .env   # then set the secrets
+#                                  docker compose up -d --build
+#                                  open http://localhost:8080
+#
+# Only the website (nginx) is published. The backend and ML service are reachable
+# only on the internal network; PostgreSQL is published on 55432 for local tools.
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-chlatvei}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chlatvei_dev}
       POSTGRES_DB: ${POSTGRES_DB:-chlatvei}
     ports:
-      - "${POSTGRES_PORT:-55432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-55432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./backend/prisma/init:/docker-entrypoint-initdb.d:ro
@@ -16,6 +25,45 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  ml-service:
+    build: ./ml-service
+    restart: unless-stopped
+    environment:
+      ML_API_KEY: ${ML_API_KEY:-}
+    expose:
+      - "8000"
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml-service:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-chlatvei}:${POSTGRES_PASSWORD:-chlatvei_dev}@postgres:5432/${POSTGRES_DB:-chlatvei}
+      # Empty or short secrets make the backend refuse to start (env validation), so a missing .env fails safely.
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-}
+      CORS_ORIGINS: ${PUBLIC_URL:-http://localhost:8080}
+      ML_SERVICE_URL: http://ml-service:8000
+      ML_API_KEY: ${ML_API_KEY:-}
+      TRUST_PROXY: "true" # behind nginx (see docs/security)
+      REQUIRE_DIFFERENT_APPROVER: ${REQUIRE_DIFFERENT_APPROVER:-false}
+      DATA_DIR: /data
+    volumes:
+      - ./data:/data:ro # source text for extraction jobs
+    expose:
+      - "3000"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${WEB_PORT:-8080}:8080"
 
 volumes:
   pgdata:

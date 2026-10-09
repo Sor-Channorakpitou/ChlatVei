@@ -1,8 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Api } from '../core/api';
 import { errorMessage } from '../core/auth';
 import { I18n, TPipe } from '../core/i18n';
+import { MessageKey } from '../core/messages';
 import { ContentType, ReviewItem } from '../core/models';
+
+export const ORIGINS = ['ALL', 'IMPORTED', 'EXTRACTED', 'MANUAL'] as const;
+type OriginFilter = (typeof ORIGINS)[number];
 
 /** Column that holds the Khmer text for each content type (mirrors the backend registry). */
 export const KHMER_FIELD: Record<ContentType, string> = {
@@ -24,7 +28,12 @@ export const KHMER_FIELD: Record<ContentType, string> = {
   templateUrl: './review.html',
   styleUrl: './review.css',
 })
-export class ReviewPage {
+export class ReviewPage implements OnInit {
+  /** Optional ?origin= query parameter (e.g. links from the Sources page). */
+  readonly origin = input<string>();
+  protected readonly origins = ORIGINS;
+  protected readonly originFilter = signal<OriginFilter>('ALL');
+
   private readonly api = inject(Api);
   protected readonly i18n = inject(I18n);
 
@@ -44,12 +53,25 @@ export class ReviewPage {
   });
   protected readonly canApprove = computed(() => this.savedKhmer().trim().length > 0 && this.selected()?.source?.status === 'VERIFIED');
 
-  constructor() {
+  ngOnInit(): void {
+    const o = this.origin()?.toUpperCase();
+    if ((ORIGINS as readonly string[]).includes(o ?? '')) this.originFilter.set(o as OriginFilter);
+    this.reload();
+  }
+
+  protected originKey(o: OriginFilter): MessageKey {
+    return `adm.origin.${o}` as MessageKey;
+  }
+
+  protected setOrigin(o: OriginFilter): void {
+    this.originFilter.set(o);
+    this.queue.set(null);
     this.reload();
   }
 
   protected reload(selectFirst = true): void {
-    this.api.reviewQueue().subscribe({
+    const origin = this.originFilter();
+    this.api.reviewQueue(origin === 'ALL' ? {} : { origin }).subscribe({
       next: (page) => {
         this.queue.set(page.data);
         if (selectFirst && !page.data.some((q) => q.id === this.selectedId())) this.select(page.data[0] ?? null);

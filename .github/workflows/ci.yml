@@ -1,0 +1,120 @@
+# CI/CD for ChlatVei (spec §28): install → lint/type-check → test → build → docker build → publish.
+name: CI
+
+on:
+  push:
+    branches: [main, development, "feature/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: chlatvei
+          POSTGRES_PASSWORD: chlatvei_ci
+          POSTGRES_DB: chlatvei_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U chlatvei" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://chlatvei:chlatvei_ci@localhost:5432/chlatvei_test
+      DATABASE_URL: postgresql://chlatvei:chlatvei_ci@localhost:5432/chlatvei_test
+      JWT_ACCESS_SECRET: ci-only-secret-that-is-long-enough-for-validation-0123456789
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Type-check
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: End-to-end tests (real PostgreSQL)
+        run: npm run test:e2e
+      - name: Dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Unit tests
+        run: npx ng test --watch=false
+      - name: Production build
+        run: npx ng build --configuration production
+      - name: Dependency audit
+        run: npm audit --omit=dev --audit-level=high
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r ml-service/requirements-dev.txt -r pipelines/requirements.txt
+      - name: ML service and package tests
+        working-directory: ml-service
+        run: python -m pytest -q
+      - name: Data pipeline and dataset integrity tests
+        working-directory: pipelines
+        run: python -m pytest -q
+
+  docker:
+    needs: [backend, frontend, python]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        service: [backend, frontend, ml-service]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Image owner (registry names must be lower-case)
+        run: echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+      - name: Log in to GitHub Container Registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build (and publish on main)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.service }}
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          tags: |
+            ghcr.io/${{ env.OWNER }}/chlatvei-${{ matrix.service }}:latest
+            ghcr.io/${{ env.OWNER }}/chlatvei-${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}

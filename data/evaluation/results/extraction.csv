@@ -1,0 +1,5 @@
+source_id,field,tp,predicted,gold,precision,recall,f1,split
+S001,fee,5,9,5,0.556,1.0,0.714,development
+S001,required_document,8,9,9,0.667,0.889,0.762,development
+S003,fee,2,14,2,0.143,1.0,0.25,held-out
+S003,required_document,0,4,4,0.0,0.0,0.0,held-out

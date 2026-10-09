@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import {
-  Category, Checklist, ContentType, FeedbackAnalytics, One, Overview, Page, ReviewItem, SearchHit,
-  ServiceDetail, ServiceSummary, Source,
+  AdminUser, Category, ChangeRecord, Checklist, ComplexityRow, ContentType, ExtractionJob, FeedbackAnalytics, FeedbackItem,
+  FeedbackStatus, One, Overview, Page, ReviewItem, Role, SearchHit, ServiceDetail, ServiceSummary, Source, SourceDetail,
 } from './models';
 
 type Params = Record<string, string | number | boolean | undefined>;
@@ -44,6 +44,9 @@ export class Api {
   service(slug: string): Observable<ServiceDetail> {
     return data(this.http.get<One<ServiceDetail>>(`/api/services/${encodeURIComponent(slug)}`));
   }
+  changes(slug: string): Observable<ChangeRecord[]> {
+    return data(this.http.get<One<ChangeRecord[]>>(`/api/services/${encodeURIComponent(slug)}/changes`));
+  }
   search(q: string): Observable<SearchHit[]> {
     return data(this.http.get<One<SearchHit[]>>('/api/search', { params: params({ q }) }));
   }
@@ -69,7 +72,7 @@ export class Api {
   }
 
   // ─── Admin ───────────────────────────────────────────────────────────
-  reviewQueue(p: { page?: number; pageSize?: number; service?: string } = {}): Observable<Page<ReviewItem>> {
+  reviewQueue(p: { page?: number; pageSize?: number; service?: string; origin?: string } = {}): Observable<Page<ReviewItem>> {
     return this.http.get<Page<ReviewItem>>('/api/admin/review', { params: params({ pageSize: 100, ...p }) });
   }
   updateContent(type: ContentType, id: string, patch: Record<string, unknown>): Observable<unknown> {
@@ -92,5 +95,38 @@ export class Api {
   }
   decideSource(id: string, status: 'VERIFIED' | 'REJECTED' | 'OUTDATED', comment?: string): Observable<Source> {
     return data(this.http.post<One<Source>>(`/api/sources/${id}/decision`, { status, comment }));
+  }
+  source(id: string): Observable<SourceDetail> {
+    return data(this.http.get<One<SourceDetail>>(`/api/sources/${id}`));
+  }
+
+  adminServices(): Observable<Page<ServiceSummary>> {
+    return this.http.get<Page<ServiceSummary>>('/api/admin/services', { params: params({ pageSize: 100 }) });
+  }
+  updateService(id: string, patch: { nameKm?: string; publishStatus?: string }): Observable<ServiceSummary> {
+    return data(this.http.patch<One<ServiceSummary>>(`/api/admin/services/${id}`, patch));
+  }
+
+  // ─── Admin: Phase 8 ──────────────────────────────────────────────────
+  runExtraction(sourceId: string, serviceId: string): Observable<ExtractionJob> {
+    return data(this.http.post<One<ExtractionJob>>('/api/admin/extraction-jobs', { sourceId, serviceId }));
+  }
+  complexity(): Observable<ComplexityRow[]> {
+    return data(this.http.get<One<ComplexityRow[]>>('/api/admin/analytics/complexity'));
+  }
+  recomputeComplexity(): Observable<{ updated: number; failed: number }> {
+    return data(this.http.post<One<{ updated: number; failed: number }>>('/api/admin/analytics/complexity/recompute', {}));
+  }
+  feedbackList(p: { status?: string; kind?: string; page?: number; pageSize?: number } = {}): Observable<Page<FeedbackItem>> {
+    return this.http.get<Page<FeedbackItem>>('/api/feedback', { params: params({ pageSize: 50, ...p }) });
+  }
+  setFeedbackStatus(id: string, status: FeedbackStatus): Observable<{ id: string; status: FeedbackStatus }> {
+    return data(this.http.patch<One<{ id: string; status: FeedbackStatus }>>(`/api/feedback/${id}`, { status }));
+  }
+  users(p: { q?: string; role?: string; page?: number; pageSize?: number } = {}): Observable<Page<AdminUser>> {
+    return this.http.get<Page<AdminUser>>('/api/admin/users', { params: params({ pageSize: 50, ...p }) });
+  }
+  updateUser(id: string, patch: { role?: Role; isActive?: boolean }): Observable<AdminUser> {
+    return data(this.http.patch<One<AdminUser>>(`/api/admin/users/${id}`, patch));
   }
 }

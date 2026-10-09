@@ -151,6 +151,8 @@ describe('Verification workflow and citizen journey', () => {
     const search = await http().get('/api/search').query({ q: 'driver' }).expect(200);
     expect(search.body.data[0]).toMatchObject({ slug: 'driver_license_ab', matchedBy: 'keyword' });
     const searchKm = await http().get('/api/search').query({ q: 'បណ្ណបើកបរ' }).expect(200);
+    // % and _ are literal characters, not wildcards that match every service.
+    expect((await http().get('/api/search').query({ q: '%%' }).expect(200)).body.data).toEqual([]);
     expect(searchKm.body.data[0].slug).toBe('driver_license_ab');
 
     const created = await http().post('/api/checklists').set(bearer(citizen)).send({ serviceSlug: 'driver_license_ab' }).expect(201);

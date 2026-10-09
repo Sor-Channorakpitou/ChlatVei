@@ -2,6 +2,11 @@
 
 <div class="layout">
   <section class="card stack-sm queue">
+    <div class="filters" role="group">
+      @for (o of origins; track o) {
+        <button type="button" class="chip" [attr.aria-pressed]="originFilter() === o" (click)="setOrigin(o)">{{ originKey(o) | t }}</button>
+      }
+    </div>
     <div class="label">{{ 'adm.queue' | t: { n: queue()?.length ?? 0 } }}</div>
     @if (queue() === null) { <p class="muted">{{ 'gen.loading' | t }}</p> }
     @for (q of queue(); track q.id) {
@@ -28,6 +33,12 @@
 
     @if (selected(); as item) {
       <h2>{{ i18n.pick(item.service.nameKm, item.service.nameEn) }}</h2>
+      @if (item.origin === 'EXTRACTED') {
+        <p class="extracted">
+          <span class="badge b-warn">{{ 'adm.origin.EXTRACTED' | t }}@if (item.confidence !== null) { · {{ 'adm.confidence' | t: { n: (item.confidence * 100).toFixed(0) } }} }</span>
+          {{ 'adm.extractedNote' | t }}
+        </p>
+      }
 
       <div class="compare">
         <div class="box stack-sm">

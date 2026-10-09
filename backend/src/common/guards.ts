@@ -40,7 +40,7 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthenticatedError();
     }
     try {
-      const payload = await this.jwt.verifyAsync<AccessTokenPayload>(token);
+      const payload = await this.jwt.verifyAsync<AccessTokenPayload>(token, { algorithms: ['HS256'] });
       req.user = { id: payload.sub, role: payload.role };
     } catch {
       // An invalid token on a public route is ignored; on any other route it is rejected.

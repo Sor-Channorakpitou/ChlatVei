@@ -11,22 +11,26 @@ test('citizen finds a service, completes a checklist and gives feedback', async 
   await expect(page.getByRole('link', { name: /ផ្តល់បណ្ណបើកបរ/ })).toBeVisible();
   await shot(page, '01-home-km');
 
-  // Search in Khmer (no spaces between words) finds the service.
-  await page.getByRole('searchbox').fill('បណ្ណបើកបរ');
+  // Search in Khmer with a phrase that never appears verbatim on the page
+  // ("motorbike driving-license test"): keyword search misses it; the ML ranker (Phase 7) finds it.
+  await page.getByRole('searchbox').fill('ប្រឡងបណ្ណបើកបរម៉ូតូ');
   await expect(page.getByText('លទ្ធផល')).toBeVisible();
   await page.getByRole('link', { name: /ផ្តល់បណ្ណបើកបរ/ }).first().click();
 
   // Service detail: verified content, the source, and "not stated" for processing time.
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('ផ្តល់បណ្ណបើកបរ');
-  await expect(page.getByText('វិញ្ញាបនបត្របញ្ជាក់កាយសម្បទា')).toBeVisible();
+  await expect(page.getByText('វិញ្ញាបនបត្របញ្ជាក់កាយសម្បទា').first()).toBeVisible();
   await expect(page.getByText('30,000 ៛').first()).toBeVisible();
   await expect(page.getByText('ប្រភពផ្លូវការមិនបានបញ្ជាក់')).toBeVisible();
   await expect(page.getByRole('link', { name: "Driver's License (Khmer)" })).toBeVisible();
+  // ChlatVei's own complexity estimate is shown apart from official information.
+  await expect(page.getByRole('heading', { name: 'តើសេវានេះស្មុគស្មាញប៉ុណ្ណា?' })).toBeVisible();
+  await expect(page.getByText('មិនមែនជាព័ត៌មានផ្លូវការ', { exact: false })).toBeVisible();
   await shot(page, '02-service-detail-km');
 
   // English switch.
   await page.getByRole('button', { name: 'EN' }).click();
-  await expect(page.getByText('Physical fitness (medical) certificate')).toBeVisible();
+  await expect(page.getByText('Physical fitness (medical) certificate').first()).toBeVisible();
   await expect(page.getByText('Not stated by official sources')).toBeVisible();
   await shot(page, '03-service-detail-en');
   await page.getByRole('button', { name: 'ខ្មែរ' }).click();

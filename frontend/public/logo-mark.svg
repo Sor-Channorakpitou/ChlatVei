@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ChlatVei">
+  <!-- ChlatVei mark: a "C" for ChlatVei, opened by a gold check mark (verified guidance). -->
+  <rect width="64" height="64" rx="15" fill="#1f3fa6"/>
+  <path d="M42.28 19.74 A16 16 0 1 0 42.28 44.26" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M29.5 33 L35 38.5 L52 18" fill="none" stroke="#f2b84b" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
