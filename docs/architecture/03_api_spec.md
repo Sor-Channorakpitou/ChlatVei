@@ -154,7 +154,7 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | PATCH | `/sources/:id` | 🛡️ | Metadata only |
 | GET | `/sources/:id` | 🛡️ | With snapshots and linked services |
 | POST | `/sources/:id/decision` | 🛡️ | `{status: VERIFIED \| REJECTED \| OUTDATED, comment?}` (records a verification). Changing a verified source's URL or tier sends it back to `PENDING` |
-| POST | `/sources/:id/snapshots` | 🛡️ | Registers a snapshot `{collectedAt, sha256, storagePath}` |
+| POST | `/sources/:id/snapshots` | 🛡️ | Registers a snapshot `{collectedAt, sha256, storagePath}`. Returns `changed: true` when the source already had a snapshot; the source is then reset to `PENDING` for review (spec §24) |
 | PUT | `/admin/services/:id/sources/:sourceId` | 🛡️ | `{relevance}`: link a source |
 | DELETE | `/admin/services/:id/sources/:sourceId` | 🛡️ | Unlink a source |
 

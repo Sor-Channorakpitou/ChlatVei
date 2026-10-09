@@ -25,6 +25,9 @@ manual annotation            ──► data/processed/annotations/service_facts.
           │                       (verbatim evidence, PENDING)
           ▼
 pipelines/coverage.py        ──► data/processed/field_coverage.csv
+
+pipelines/detect_changes.py  ──► data/processed/change_reports/<date>.json
+                                  (on re-collection: what changed, facts to re-check)
 ```
 
 ## Running it
@@ -37,10 +40,21 @@ cd pipelines
 ../.venv/Scripts/python collect_sources.py          # or --only S001 S003
 TESSERACT_CMD=/path/to/tesseract ../.venv/Scripts/python extract_text.py   # --no-ocr to skip OCR
 ../.venv/Scripts/python coverage.py
+../.venv/Scripts/python detect_changes.py           # after re-collecting: report content changes
 ../.venv/Scripts/python -m pytest
 ```
 
 OCR requires [Tesseract](https://github.com/tesseract-ocr/tesseract) 5.x with the `khm` and `eng` language data.
+
+## Detecting changes (spec §24)
+
+`collect_sources.py` only stores a new snapshot when a source's SHA-256 changes. `detect_changes.py` then compares the two latest snapshots of each source on their extracted text (so markup-only changes are ignored) and writes `data/processed/change_reports/<date>.json` with:
+
+- the lines added and removed;
+- the fields those lines seem to touch (`fee`, `required_document`, `step`, `processing_time`, `eligibility`), from Khmer and English keyword cues;
+- every annotated fact that quoted the previous snapshot, with `evidence_still_present: false` when its quote is gone.
+
+It never edits `service_facts.csv`. A person re-checks each flagged fact against the new snapshot and, if it changed, appends a new fact row (new `fact_id`) quoting the new text. Run `extract_text.py` first so new snapshots have committed text (including OCR).
 
 ## Adding a source
 

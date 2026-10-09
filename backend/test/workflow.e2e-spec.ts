@@ -222,4 +222,22 @@ describe('Verification workflow and citizen journey', () => {
     const sort = await http().get('/api/services?sort=passwordHash').expect(422);
     expect(sort.body.error.code).toBe('BUSINESS_RULE');
   });
+
+  it('14. a snapshot with new content sends the source back to review; published content stays', async () => {
+    const snap = (sha: string, day: string) =>
+      http().post(`/api/sources/${sourceId}/snapshots`).set(bearer(admin))
+        .send({ collectedAt: `2026-${day}T00:00:00Z`, sha256: sha.repeat(64), storagePath: `data/raw/S001/2026-${day}.html` });
+
+    await snap('a', '10-08').expect(201); // first snapshot is not a change
+    expect((await http().get(`/api/sources/${sourceId}`).set(bearer(admin)).expect(200)).body.data.status).toBe('VERIFIED');
+    await snap('a', '10-09').expect(409); // identical content
+
+    const res = await snap('b', '11-01').expect(201);
+    expect(res.body.data.changed).toBe(true);
+    expect((await http().get(`/api/sources/${sourceId}`).set(bearer(admin)).expect(200)).body.data.status).toBe('PENDING');
+    expect(await prisma.auditLog.count({ where: { action: 'source.changed', entityId: sourceId } })).toBe(1);
+
+    const pub = await http().get('/api/services/driver_license_ab').expect(200);
+    expect(pub.body.data.requirements.length).toBeGreaterThan(0);
+  });
 });

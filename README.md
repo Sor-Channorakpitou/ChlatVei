@@ -76,5 +76,6 @@ cd pipelines
 ../.venv/Scripts/python collect_sources.py   # snapshot official sources into data/raw
 ../.venv/Scripts/python extract_text.py      # text extraction (+ Khmer OCR via Tesseract)
 ../.venv/Scripts/python coverage.py          # service x field coverage
+../.venv/Scripts/python detect_changes.py    # after re-collecting: what changed, facts to re-check
 ../.venv/Scripts/python -m pytest            # pipeline + dataset integrity tests
 ```

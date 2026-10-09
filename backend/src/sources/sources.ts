@@ -134,16 +134,28 @@ export class SourcesService {
     });
   }
 
+  /**
+   * Registers a snapshot. New content for a source that already has a snapshot is a change (spec §24):
+   * the source goes back to PENDING so an admin re-checks it. Published content is never changed here.
+   */
   async addSnapshot(sourceId: string, dto: CreateSnapshotDto, actorId: string, meta: RequestMeta) {
     const source = await this.prisma.source.findUnique({ where: { id: sourceId } });
     if (!source) throw new NotFoundError('Source');
     const existing = await this.prisma.sourceSnapshot.findUnique({ where: { sourceId_sha256: { sourceId, sha256: dto.sha256 } } });
     if (existing) throw new ConflictError('A snapshot with identical content is already registered');
+    const previous = await this.prisma.sourceSnapshot.findFirst({ where: { sourceId }, orderBy: { collectedAt: 'desc' } });
+    const changed = !!previous;
     return this.prisma.$transaction(async (tx) => {
       const snapshot = await tx.sourceSnapshot.create({ data: { ...dto, sourceId } });
-      await tx.source.update({ where: { id: sourceId }, data: { lastCheckedAt: dto.collectedAt } });
+      await tx.source.update({ where: { id: sourceId }, data: { lastCheckedAt: dto.collectedAt, ...(changed ? { status: 'PENDING' } : {}) } });
       await this.audit.record({ actorId, action: 'source.snapshot', entityType: 'SOURCE', entityId: sourceId, meta }, tx);
-      return snapshot;
+      if (changed) {
+        await this.audit.record(
+          { actorId, action: 'source.changed', entityType: 'SOURCE', entityId: sourceId, metadata: { from: source.status, previousSha256: previous.sha256, sha256: dto.sha256 }, meta },
+          tx,
+        );
+      }
+      return { ...snapshot, changed };
     });
   }
 
