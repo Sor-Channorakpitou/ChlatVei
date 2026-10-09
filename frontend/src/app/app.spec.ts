@@ -19,6 +19,7 @@ describe('App shell', () => {
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.logo')?.textContent?.trim()).toBe('ChlatVei');
+    expect(el.querySelector('.logo img')?.getAttribute('src')).toBe('logo-mark.svg');
     expect(el.querySelector('nav.bottom')?.textContent).toContain('ទំព័រដើម');
   });
 

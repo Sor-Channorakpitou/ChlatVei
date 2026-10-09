@@ -1,5 +1,11 @@
 # Screen Designs
 
+## Logo
+
+![ChlatVei logo](logo.png)
+
+The mark is a "C" for ChlatVei, opened by a gold check mark that stands for **verified guidance**, on a royal-blue rounded square. The source is [`frontend/public/logo-mark.svg`](../../frontend/public/logo-mark.svg); the app icons and favicon are generated from it. The name is always written in English.
+
 > The app is now built. Screenshots of the **real** app, taken by the browser tests, are in [`app-screens/`](app-screens). The images below were the design reference.
 
 Static images of the main screens. They are the visual reference for the Angular frontend (Phase 5, [ADR-006](../architecture/decisions/ADR-006-angular-pwa-frontend.md)).

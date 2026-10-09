@@ -10,7 +10,7 @@ import { I18n, TPipe } from './core/i18n';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, TPipe],
   template: `
     <header class="top">
-      <a routerLink="/" class="logo" aria-label="ChlatVei">Chlat<span>Vei</span></a>
+      <a routerLink="/" class="logo" aria-label="ChlatVei"><img src="logo-mark.svg" width="32" height="32" alt="" />Chlat<span>Vei</span></a>
       <div class="actions">
         @if (auth.isAdmin()) {
           <a class="pill" [routerLink]="inAdmin() ? '/' : '/admin'">{{ (inAdmin() ? 'nav.backToSite' : 'nav.admin') | t }}</a>
@@ -48,7 +48,8 @@ import { I18n, TPipe } from './core/i18n';
       position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 12px;
       padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; background: var(--card); border-bottom: 1px solid var(--line);
     }
-    .logo { font-size: 22px; font-weight: 700; letter-spacing: -.01em; color: var(--accent); text-decoration: none; }
+    .logo { display: inline-flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 700; letter-spacing: -.01em; color: var(--accent); text-decoration: none; }
+    .logo img { display: block; border-radius: 8px; }
     .logo span { color: var(--gold); }
     .actions { display: flex; gap: 8px; align-items: center; }
     .pill { font-size: 13px; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: var(--accent-soft); }
