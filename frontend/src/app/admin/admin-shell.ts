@@ -9,6 +9,7 @@ import { TPipe } from '../core/i18n';
     <nav class="tabs" aria-label="Admin">
       <a routerLink="review" routerLinkActive="on">{{ 'nav.review' | t }}</a>
       <a routerLink="dashboard" routerLinkActive="on">{{ 'nav.dashboard' | t }}</a>
+      <a routerLink="services" routerLinkActive="on">{{ 'adm.services' | t }}</a>
       <a routerLink="sources" routerLinkActive="on">{{ 'nav.sources' | t }}</a>
       <a routerLink="feedback" routerLinkActive="on">{{ 'nav.feedback' | t }}</a>
       <a routerLink="users" routerLinkActive="on">{{ 'nav.users' | t }}</a>

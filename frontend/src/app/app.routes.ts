@@ -22,6 +22,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'review' },
       { path: 'review', loadComponent: () => import('./admin/review').then((m) => m.ReviewPage) },
       { path: 'dashboard', loadComponent: () => import('./admin/dashboard').then((m) => m.DashboardPage) },
+      { path: 'services', loadComponent: () => import('./admin/services').then((m) => m.ServicesAdminPage) },
       { path: 'sources', loadComponent: () => import('./admin/sources').then((m) => m.SourcesPage) },
       { path: 'feedback', loadComponent: () => import('./admin/feedback').then((m) => m.FeedbackAdminPage) },
       { path: 'users', loadComponent: () => import('./admin/users').then((m) => m.UsersPage) },

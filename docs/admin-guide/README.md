@@ -32,7 +32,7 @@ How an administrator keeps ChlatVei's information correct, in the order you woul
 
 ## 3. Publishing a service
 
-A service becomes visible to citizens when its status is **PUBLISHED**. That requires a **Khmer name** and **at least one verified requirement or step**. *(Publishing is done through the API today: `PATCH /api/admin/services/:id {publishStatus: "PUBLISHED"}`. A button for it is a small follow-up.)*
+**Admin → Services** lists every service. A service becomes visible to citizens when you press **Publish**. That requires a **Khmer name** (type it in the service's field and press **Save**) and **at least one approved requirement or step**; otherwise the reason is shown. **Unpublish** takes it off the public site without deleting anything.
 
 ## 4. Dashboard: what needs attention
 

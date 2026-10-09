@@ -100,6 +100,13 @@ export class Api {
     return data(this.http.get<One<SourceDetail>>(`/api/sources/${id}`));
   }
 
+  adminServices(): Observable<Page<ServiceSummary>> {
+    return this.http.get<Page<ServiceSummary>>('/api/admin/services', { params: params({ pageSize: 100 }) });
+  }
+  updateService(id: string, patch: { nameKm?: string; publishStatus?: string }): Observable<ServiceSummary> {
+    return data(this.http.patch<One<ServiceSummary>>(`/api/admin/services/${id}`, patch));
+  }
+
   // ─── Admin: Phase 8 ──────────────────────────────────────────────────
   runExtraction(sourceId: string, serviceId: string): Observable<ExtractionJob> {
     return data(this.http.post<One<ExtractionJob>>('/api/admin/extraction-jobs', { sourceId, serviceId }));
