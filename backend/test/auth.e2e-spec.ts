@@ -120,6 +120,28 @@ describe('Auth', () => {
     await http().get('/api/users/me').set(bearer(unsigned)).expect(401);
   });
 
+  it('changes the password, ends other sessions and keeps the caller signed in', async () => {
+    const reg = await register(valid).expect(201);
+    const oldCookie = refreshCookie(reg);
+    const token = reg.body.data.accessToken;
+    const change = (body: object) => http().post('/api/auth/password').set(bearer(token)).send(body);
+
+    await http().post('/api/auth/password').send({ currentPassword: valid.password, newPassword: 'tonle-sap-lake-2026' }).expect(401);
+    expect((await change({ currentPassword: 'wrong-password-1', newPassword: 'tonle-sap-lake-2026' }).expect(422)).body.error.message).toMatch(/incorrect/);
+    await change({ currentPassword: valid.password, newPassword: valid.password }).expect(422);
+    await change({ currentPassword: valid.password, newPassword: 'password123' }).expect(422);
+    await change({ currentPassword: valid.password, newPassword: 'short' }).expect(400);
+
+    const res = await change({ currentPassword: valid.password, newPassword: 'tonle-sap-lake-2026' }).expect(200);
+    expect(res.body.data.accessToken).toEqual(expect.any(String));
+    await http().post('/api/auth/refresh').set('Cookie', refreshCookie(res)).expect(200);
+    await http().post('/api/auth/refresh').set('Cookie', oldCookie).expect(401);
+
+    await http().post('/api/auth/login').send({ email: valid.email, password: valid.password }).expect(401);
+    await http().post('/api/auth/login').send({ email: valid.email, password: 'tonle-sap-lake-2026' }).expect(200);
+    expect(await prisma.auditLog.count({ where: { action: 'user.password_change' } })).toBe(1);
+  });
+
   it('updates own profile but ignores attempts to change role', async () => {
     const reg = await register(valid).expect(201);
     const token = reg.body.data.accessToken;

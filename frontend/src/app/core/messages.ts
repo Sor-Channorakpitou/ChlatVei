@@ -106,6 +106,10 @@ const en = {
   'auth.signedInAs': 'Signed in as {name}',
   'auth.preferredLang': 'Preferred language',
   'auth.saved': 'Saved',
+  'auth.changePassword': 'Change password',
+  'auth.currentPassword': 'Current password',
+  'auth.newPassword': 'New password',
+  'auth.passwordChanged': 'Password changed. Other devices were signed out.',
 
   // admin
   'adm.queue': 'Waiting for review ({n})',
@@ -292,6 +296,10 @@ const km: Record<MessageKey, string> = {
   'auth.signedInAs': 'បានចូលជា {name}',
   'auth.preferredLang': 'ភាសាដែលចូលចិត្ត',
   'auth.saved': 'បានរក្សាទុក',
+  'auth.changePassword': 'ប្តូរពាក្យសម្ងាត់',
+  'auth.currentPassword': 'ពាក្យសម្ងាត់បច្ចុប្បន្ន',
+  'auth.newPassword': 'ពាក្យសម្ងាត់ថ្មី',
+  'auth.passwordChanged': 'បានប្តូរពាក្យសម្ងាត់។ ឧបករណ៍ផ្សេងទៀតត្រូវបានចាកចេញ។',
 
   'adm.queue': 'រង់ចាំពិនិត្យ ({n})',
   'adm.queueEmpty': 'គ្មានអ្វីរង់ចាំពិនិត្យទេ។',

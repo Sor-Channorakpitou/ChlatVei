@@ -63,6 +63,7 @@ Content fields come in pairs (`nameKm` / `nameEn`). The client chooses which to 
 | POST | `/auth/login` | 🌐 | `{email, password}` → `{accessToken, user}` and sets the refresh cookie. Rate-limited |
 | POST | `/auth/refresh` | 🌐 (cookie) | Rotates the refresh token → `{accessToken}` |
 | POST | `/auth/logout` | 👤 | Revokes the refresh-token family and clears the cookie |
+| POST | `/auth/password` | 👤 | `{currentPassword, newPassword}` → `{accessToken}`. Wrong current password, an unchanged or a common password → 422. Ends every session (all refresh tokens) and sets a fresh refresh cookie for the caller. Audited as `user.password_change` |
 | GET | `/users/me` | 👤 | Current profile |
 | PATCH | `/users/me` | 👤 | `{displayName?, preferredLanguage?}` |
 
