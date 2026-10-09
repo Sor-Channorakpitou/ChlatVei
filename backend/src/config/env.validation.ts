@@ -31,7 +31,7 @@ export class EnvironmentVariables {
   REFRESH_TOKEN_TTL_DAYS = 7;
 
   @IsString()
-  CORS_ORIGINS = 'http://localhost:5173';
+  CORS_ORIGINS = 'http://localhost:4200';
 
   @Transform(({ value }) => value === true || value === 'true')
   @IsBoolean()

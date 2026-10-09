@@ -1,0 +1,161 @@
+@switch (load().state) {
+  @case ('loading') { <p class="muted">{{ 'gen.loading' | t }}</p> }
+  @case ('missing') {
+    <div class="stack">
+      <p>{{ 'svc.notFound' | t }}</p>
+      <a routerLink="/" class="btn ghost">{{ 'gen.back' | t }}</a>
+    </div>
+  }
+  @case ('error') { <p class="error">{{ 'gen.error' | t }}</p> }
+}
+
+@if (svc(); as s) {
+  <article class="stack">
+    <header class="stack-sm">
+      <a routerLink="/" class="back" [attr.aria-label]="'gen.back' | t">← {{ 'nav.home' | t }}</a>
+      <h1>{{ i18n.pick(s.nameKm, s.nameEn) }}</h1>
+      @if (s.responsibleBodyKm || s.responsibleBodyEn) {
+        <p class="muted">{{ i18n.pick(s.responsibleBodyKm, s.responsibleBodyEn) }}</p>
+      }
+      <div class="row">
+        @if (s.lastVerifiedAt) {
+          <span class="badge b-ok">✓ {{ 'svc.lastVerified' | t: { date: i18n.date(s.lastVerifiedAt) } }}</span>
+        } @else {
+          <span class="badge b-warn">{{ 'svc.awaiting' | t }}</span>
+        }
+      </div>
+    </header>
+
+    @if (eligibility().length || notStated('ELIGIBILITY')) {
+      <section class="stack-sm">
+        <h2>{{ 'svc.who' | t }}</h2>
+        @if (eligibility().length) {
+          <ul class="items">
+            @for (r of eligibility(); track r.id) {
+              <li><span class="dot"></span><span>{{ i18n.pick(r.textKm, r.textEn) }}@if (i18n.englishOnly(r.appliesTo); as a) { <span class="muted"> · {{ a }}</span> }</span></li>
+            }
+          </ul>
+        } @else { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      </section>
+    }
+
+    <section class="stack-sm">
+      <h2 class="h-count">{{ 'svc.docs' | t }} @if (documents().length) { <span class="muted">{{ documents().length }}</span> }</h2>
+      @if (documents().length) {
+        <ul class="items">
+          @for (r of documents(); track r.id) {
+            <li><span class="dot"></span><span>{{ i18n.pick(r.textKm, r.textEn) }}@if (i18n.englishOnly(r.appliesTo); as a) { <span class="muted"> · {{ a }}</span> }</span></li>
+          }
+        </ul>
+      } @else if (notStated('DOCUMENTS')) { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      @else { <p class="muted">{{ 'svc.nothingYet' | t }}</p> }
+    </section>
+
+    @if (conditions().length) {
+      <section class="stack-sm">
+        <h2>{{ 'svc.conditions' | t }}</h2>
+        <ul class="items">
+          @for (r of conditions(); track r.id) {
+            <li><span class="dot"></span><span>{{ i18n.pick(r.textKm, r.textEn) }}</span></li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="stack-sm">
+      <h2>{{ 'svc.steps' | t }}</h2>
+      @if (s.steps.length) {
+        <ol class="items">
+          @for (st of s.steps; track st.id; let i = $index) {
+            <li>
+              <span class="num">{{ i + 1 }}</span>
+              <span>
+                {{ i18n.pick(st.titleKm, st.titleEn) }}
+                @if (st.detailKm || st.detailEn) { <br /><span class="muted">{{ i18n.pick(st.detailKm, st.detailEn) }}</span> }
+              </span>
+            </li>
+          }
+        </ol>
+      } @else if (notStated('STEPS')) { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      @else { <p class="muted">{{ 'svc.nothingYet' | t }}</p> }
+    </section>
+
+    <section class="stack-sm">
+      <h2>{{ 'svc.fees' | t }}</h2>
+      @if (s.fees.length) {
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              @for (f of s.fees; track f.id) {
+                <tr>
+                  <td>{{ i18n.pick(f.labelKm, f.labelEn) }}@if (i18n.englishOnly(f.appliesTo); as a) { <br /><span class="muted">{{ a }}</span> }</td>
+                  <td class="n strong">{{ i18n.money(f.amount, f.currency) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (notStated('FEES')) { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      @else { <p class="muted">{{ 'svc.nothingYet' | t }}</p> }
+    </section>
+
+    <section class="stack-sm">
+      <h2>{{ 'svc.time' | t }}</h2>
+      @if (s.processingTimes.length) {
+        <ul class="items">
+          @for (p of s.processingTimes; track p.id) {
+            <li><span class="dot"></span><span>{{ i18n.pick(p.textKm, p.textEn) }}@if (i18n.englishOnly(p.appliesTo); as a) { <span class="muted"> · {{ a }}</span> }</span></li>
+          }
+        </ul>
+      }
+      @if (notStated('PROCESSING_TIME')) { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      @else if (!s.processingTimes.length) { <p class="muted">{{ 'svc.nothingYet' | t }}</p> }
+    </section>
+
+    @if (s.locations.length || notStated('LOCATIONS')) {
+      <section class="stack-sm">
+        <h2>{{ 'svc.where' | t }}</h2>
+        <ul class="items">
+          @for (l of s.locations; track l.id) {
+            <li>
+              <span class="dot"></span>
+              <span>
+                @if (l.channel === 'ONLINE') { <span class="badge b-info">{{ 'svc.online' | t }}</span> }
+                {{ i18n.pick(l.nameKm, l.nameEn) }}
+                @if (l.addressKm || l.addressEn) { <br /><span class="muted">{{ i18n.pick(l.addressKm, l.addressEn) }}</span> }
+                @if (l.url) { <br /><a [href]="l.url" target="_blank" rel="noopener">{{ l.url }}</a> }
+                @if (l.phone) { <br /><span class="muted">☎ {{ l.phone }}</span> }
+                @if (l.hoursText) { <span class="muted"> · {{ l.hoursText }}</span> }
+              </span>
+            </li>
+          }
+        </ul>
+        @if (!s.locations.length) { <p class="gap-note">{{ 'svc.notStated' | t }}</p> }
+      </section>
+    }
+
+    <section class="stack-sm">
+      <h2>{{ 'svc.sources' | t }}</h2>
+      @for (src of s.sources; track src.code) {
+        <p class="src">
+          <span class="badge b-info">{{ src.tier }}</span>
+          <a [href]="src.url" target="_blank" rel="noopener">{{ src.name }}</a>
+          <span class="muted"> · {{ src.publisher }}@if (src.lastCheckedAt) { · {{ 'svc.lastChecked' | t: { date: i18n.date(src.lastCheckedAt) } }} }</span>
+        </p>
+      } @empty {
+        <p class="muted">{{ 'svc.nothingYet' | t }}</p>
+      }
+    </section>
+
+    @if (actionError()) { <p class="error" role="alert">{{ actionError() }}</p> }
+
+    <div class="stack-sm">
+      <button type="button" class="btn block" [disabled]="busy()" (click)="openChecklist()">
+        {{ (auth.isSignedIn() ? 'svc.makeChecklist' : 'svc.signInForChecklist') | t }}
+      </button>
+      <a class="btn ghost block center" [routerLink]="['/services', s.slug, 'feedback']">{{ 'svc.giveFeedback' | t }}</a>
+    </div>
+
+    <p class="muted">{{ 'independent' | t }}</p>
+  </article>
+}

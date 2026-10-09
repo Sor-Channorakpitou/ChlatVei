@@ -3,7 +3,7 @@
 **Status:** Accepted · 2026-10-08
 
 ## Context
-A React SPA talks to a REST API. Requirements: registration and login, password hashing, RBAC, and protection of admin endpoints (spec §20).
+An Angular single-page app (ADR-006) talks to a REST API. Requirements: registration and login, password hashing, RBAC, and protection of admin endpoints (spec §20).
 
 ## Decision
 - 15-minute JWT access token, held in memory by the client and sent as a Bearer header.
