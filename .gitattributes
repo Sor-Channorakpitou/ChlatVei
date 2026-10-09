@@ -1,0 +1,3 @@
+# Raw source snapshots must stay byte-identical (sha256 change detection)
+data/raw/** -text
+*.pdf binary

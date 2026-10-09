@@ -1,0 +1,16 @@
+service_slug,name_en,category,responsible_body,government_level,mvp_status
+passport_new,Ordinary passport (new),identity_travel,"General Department of Identification, Ministry of Interior",national,candidate
+passport_renewal,Ordinary passport renewal,identity_travel,"General Department of Identification, Ministry of Interior",national,candidate
+national_id_card,Khmer national identity card,identity,"General Department of Identification, Ministry of Interior",national,candidate
+birth_registration,Birth registration and certificate,civil_status,Commune/sangkat civil registrar,commune,candidate
+late_birth_registration,Late birth registration,civil_status,Commune/sangkat civil registrar,commune,candidate
+marriage_registration,Marriage registration,civil_status,Commune/sangkat civil registrar,commune,candidate
+death_registration,Death registration,civil_status,Commune/sangkat civil registrar,commune,candidate
+civil_record_correction,Correction of a civil status record,civil_status,Commune/sangkat civil registrar,commune,candidate
+driver_license_ab,"Driver's license, Types A and B (new)",transport,Ministry of Public Works and Transport,national,candidate
+driver_license_exchange,Foreign driver's license exchange,transport,Ministry of Public Works and Transport,national,candidate
+vehicle_registration,Vehicle and motorbike registration,transport,Ministry of Public Works and Transport,national,candidate
+company_registration,Company registration,business,Ministry of Commerce (via Online Business Registration portal),national,candidate
+sole_proprietorship_registration,Sole proprietorship registration,business,Ministry of Commerce (via Online Business Registration portal),national,candidate
+tourist_evisa,Tourist e-Visa,visa,"E-Visa Office, Ministry of Foreign Affairs and International Cooperation",national,candidate
+owso_district_services,One Window Service Office district-level administrative services,local_administration,District/khan One Window Service Office,district,candidate

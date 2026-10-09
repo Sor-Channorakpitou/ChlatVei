@@ -8,7 +8,10 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 
 ## Status
 
-**Phase 1: Research.** Findings are in [docs/research](docs/research/README.md). See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
+- **Phase 1: Research.** Done; see [docs/research](docs/research/README.md).
+- **Phase 2: Data.** In progress; see the [Phase 2 report](docs/data/phase2_report.md), [collection methodology](docs/data/collection_methodology.md) and [data dictionary](data/metadata/data_dictionary.md).
+
+See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
 
 ## Repository layout
 
@@ -38,3 +41,15 @@ Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`, ...).
 ## Security
 
 Never commit `.env` files, API keys, passwords, database credentials, or tokens. Use `.env.example` to document the required variables.
+
+## Data pipeline
+
+```bash
+python -m venv .venv
+.venv/Scripts/pip install -r pipelines/requirements.txt   # .venv/bin/pip on Linux/macOS
+cd pipelines
+../.venv/Scripts/python collect_sources.py   # snapshot official sources into data/raw
+../.venv/Scripts/python extract_text.py      # text extraction (+ Khmer OCR via Tesseract)
+../.venv/Scripts/python coverage.py          # service x field coverage
+../.venv/Scripts/python -m pytest            # pipeline + dataset integrity tests
+```
