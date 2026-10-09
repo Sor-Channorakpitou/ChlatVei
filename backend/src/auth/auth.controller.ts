@@ -2,8 +2,8 @@ import { Body, Controller, HttpCode, Post, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
-import { Public } from '../common/auth.decorators';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { AuthUser, CurrentUser, Public, ReqMeta, RequestMeta } from '../common/auth.decorators';
+import { ChangePasswordDto, LoginDto, RegisterDto } from './auth.dto';
 import { AuthService, IssuedTokens } from './auth.service';
 
 export const REFRESH_COOKIE = 'chlatvei_refresh';
@@ -41,6 +41,21 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const tokens = await this.auth.refresh(req.cookies?.[REFRESH_COOKIE]);
+    this.setRefreshCookie(res, tokens);
+    return { data: { accessToken: tokens.accessToken } };
+  }
+
+  /** Signed-in users only. Ends all other sessions and returns a new access token for this one. */
+  @Throttle(AUTH_THROTTLE)
+  @HttpCode(200)
+  @Post('password')
+  async changePassword(
+    @Body() dto: ChangePasswordDto,
+    @CurrentUser() u: AuthUser,
+    @ReqMeta() meta: RequestMeta,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const tokens = await this.auth.changePassword(u.id, dto, meta);
     this.setRefreshCookie(res, tokens);
     return { data: { accessToken: tokens.accessToken } };
   }

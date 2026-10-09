@@ -36,6 +36,17 @@ describe('Auth', () => {
     expect(JSON.stringify(localStorage)).not.toContain('token-1');
   });
 
+  it('changing the password swaps in the new access token and keeps the user signed in', async () => {
+    await signIn();
+    const p = firstValueFrom(auth.changePassword('old-password', 'new-password-1'));
+    const req = ctrl.expectOne('/api/auth/password');
+    expect(req.request.body).toEqual({ currentPassword: 'old-password', newPassword: 'new-password-1' });
+    req.flush({ data: { accessToken: 'token-3' } });
+    await p;
+    expect(auth.token()).toBe('token-3');
+    expect(auth.isSignedIn()).toBe(true);
+  });
+
   it('refreshes once on 401 and retries the request with the new token', async () => {
     await signIn();
     const result = firstValueFrom(http.get<{ ok: boolean }>('/api/checklists'));

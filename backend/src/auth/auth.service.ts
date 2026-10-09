@@ -3,9 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User } from '@prisma/client';
 import { createHash, randomBytes, randomUUID } from 'crypto';
-import { AppException, ConflictError, UnauthenticatedError } from '../common/errors/app-exceptions';
+import { AuditService } from '../audit/audit.service';
+import { RequestMeta } from '../common/auth.decorators';
+import { AppException, BusinessRuleError, ConflictError, UnauthenticatedError } from '../common/errors/app-exceptions';
 import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { ChangePasswordDto, LoginDto, RegisterDto } from './auth.dto';
 import { assertAcceptablePassword, hashPassword, verifyPassword } from './password';
 
 export interface PublicUser {
@@ -52,6 +54,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly audit: AuditService,
   ) {}
 
   async register(dto: RegisterDto): Promise<{ user: PublicUser } & IssuedTokens> {
@@ -123,6 +126,28 @@ export class AuthService {
       });
       if (count !== 1) throw new UnauthenticatedError('Refresh token already used');
       return this.issueTokens(stored.user, stored.familyId, tx);
+    });
+  }
+
+  /**
+   * Changes the signed-in user's password. Every existing session ends (a stolen session can't
+   * outlive the change); the caller gets a fresh session so they stay signed in.
+   */
+  async changePassword(userId: string, dto: ChangePasswordDto, meta: RequestMeta): Promise<IssuedTokens> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.isActive) throw new UnauthenticatedError('Account not found');
+    if (!(await verifyPassword(user.passwordHash, dto.currentPassword))) {
+      throw new BusinessRuleError('Current password is incorrect');
+    }
+    if (dto.newPassword === dto.currentPassword) throw new BusinessRuleError('The new password must be different');
+    assertAcceptablePassword(dto.newPassword);
+
+    const passwordHash = await hashPassword(dto.newPassword);
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({ where: { id: userId }, data: { passwordHash, failedLogins: 0, lockedUntil: null } });
+      await this.revokeAllForUser(userId, tx);
+      await this.audit.record({ actorId: userId, action: 'user.password_change', entityType: 'USER', entityId: userId, meta }, tx);
+      return this.issueTokens(updated, randomUUID(), tx);
     });
   }
 

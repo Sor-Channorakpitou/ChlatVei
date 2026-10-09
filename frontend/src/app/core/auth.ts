@@ -77,6 +77,13 @@ export class AuthService {
     }
   }
 
+  /** The API ends every other session and returns a new access token for this one. */
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http
+      .post<One<TokenResponse>>('/api/auth/password', { currentPassword, newPassword })
+      .pipe(map((r) => void (this.accessToken = r.data.accessToken)));
+  }
+
   updateProfile(patch: Partial<Pick<User, 'displayName' | 'preferredLanguage'>>): Observable<User> {
     return this.http.patch<One<User>>('/api/users/me', patch).pipe(map((r) => {
       this.user.set(r.data);
