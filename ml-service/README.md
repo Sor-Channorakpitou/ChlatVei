@@ -21,7 +21,7 @@ tests/              pytest suite (33 tests)
 ```
 
 ```bash
-../.venv/Scripts/pip install -r requirements.txt
+../.venv/Scripts/pip install -r requirements-dev.txt
 ../.venv/Scripts/python -m pytest
 ../.venv/Scripts/python run_experiments.py
 ```

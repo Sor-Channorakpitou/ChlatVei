@@ -115,7 +115,7 @@ The Phase 4 analytics already rank steps by the **lower bound of a 95% Wilson in
 ## Reproducing
 
 ```bash
-.venv/Scripts/pip install -r ml-service/requirements.txt
+.venv/Scripts/pip install -r ml-service/requirements-dev.txt
 cd ml-service
 ../.venv/Scripts/python -m pytest          # 23 tests
 ../.venv/Scripts/python run_experiments.py # writes data/evaluation/results/

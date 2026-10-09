@@ -17,6 +17,7 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 - **Phase 7: ML integration.** Done; see the [ML integration guide](docs/ml-integration/README.md). The FastAPI ML service powers search, complexity and extraction, with fallbacks when it's down.
 - **Phase 8: Verification & intelligence.** Done; see the [admin guide](docs/admin-guide/README.md): extraction from Sources, review filters and confidence, feedback triage, complexity analytics, user management, public change history.
 - **Phase 9: Security & testing.** Done; see the [security review](docs/security/README.md): 6 findings fixed (IP spoofing, account lockout, JWT algorithm, search wildcards, 2 dependency issues), 0 known vulnerabilities.
+- **Phase 10: Docker & deployment.** Done; see the [deployment guide](docs/deployment/README.md): `docker compose up -d --build` runs everything; GitHub Actions CI tests, builds and publishes images.
 - **Screens:** [design images](docs/design/README.md) and [screenshots of the real app](docs/design/app-screens).
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
@@ -49,6 +50,14 @@ Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`, ...).
 ## Security
 
 Never commit `.env` files, API keys, passwords, database credentials, or tokens. Use `.env.example` to document the required variables.
+
+## Run everything with Docker
+
+```bash
+cp .env.example .env    # set the secrets (see docs/deployment)
+docker compose up -d --build
+# open http://localhost:8080
+```
 
 ## Run the backend
 
