@@ -8,7 +8,7 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 
 ## Status
 
-**Phase 1: Research.** See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
+**Phase 1: Research.** Findings are in [docs/research](docs/research/README.md). See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
 
 ## Repository layout
 
