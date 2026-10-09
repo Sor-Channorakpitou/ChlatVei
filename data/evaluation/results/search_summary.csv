@@ -1,0 +1,21 @@
+ranker,language,n,recall@1,recall@3,mrr
+keyword (baseline),all,62,0.323,0.532,0.454
+keyword (baseline),en,37,0.378,0.676,0.563
+keyword (baseline),km,23,0.174,0.261,0.233
+keyword (baseline),mixed,2,1.0,1.0,1.0
+tf-idf word,all,62,0.484,0.79,0.643
+tf-idf word,en,37,0.568,0.811,0.692
+tf-idf word,km,23,0.304,0.739,0.533
+tf-idf word,mixed,2,1.0,1.0,1.0
+tf-idf char 2-4,all,62,0.355,0.71,0.565
+tf-idf char 2-4,en,37,0.297,0.649,0.519
+tf-idf char 2-4,km,23,0.391,0.783,0.601
+tf-idf char 2-4,mixed,2,1.0,1.0,1.0
+"tf-idf char 2-4, names only",all,62,0.532,0.661,0.596
+"tf-idf char 2-4, names only",en,37,0.703,0.919,0.809
+"tf-idf char 2-4, names only",km,23,0.217,0.217,0.217
+"tf-idf char 2-4, names only",mixed,2,1.0,1.0,1.0
+"tf-idf char 2-4, names 50% + content 50%",all,62,0.597,0.855,0.728
+"tf-idf char 2-4, names 50% + content 50%",en,37,0.73,0.919,0.827
+"tf-idf char 2-4, names 50% + content 50%",km,23,0.348,0.739,0.544
+"tf-idf char 2-4, names 50% + content 50%",mixed,2,1.0,1.0,1.0

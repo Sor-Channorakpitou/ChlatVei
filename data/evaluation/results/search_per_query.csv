@@ -1,0 +1,311 @@
+ranker,query,language,kind,expected,rank,top
+keyword (baseline),លិខិតឆ្លងដែន,km,official_term,passport_new,1.0,passport_new
+keyword (baseline),ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new,,
+keyword (baseline),passport,en,keyword,passport_new,1.0,passport_new
+keyword (baseline),how do I get a passport,en,phrase,passport_new,3.0,driver_license_ab
+keyword (baseline),pasport application,en,typo,passport_new,,driver_license_ab
+keyword (baseline),បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal,,
+keyword (baseline),renew my passport,en,phrase,passport_renewal,1.0,passport_renewal
+keyword (baseline),passport expired,en,phrase,passport_renewal,2.0,passport_new
+keyword (baseline),អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card,3.0,passport_new
+keyword (baseline),ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card,,
+keyword (baseline),khmer national id card,en,keyword,national_id_card,1.0,national_id_card
+keyword (baseline),lost my ID card,en,phrase,national_id_card,2.0,vehicle_registration
+keyword (baseline),សំបុត្រកំណើត,km,official_term,birth_registration,4.0,passport_new
+keyword (baseline),ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration,,
+keyword (baseline),birth certificate,en,keyword,birth_registration,1.0,birth_registration
+keyword (baseline),register my newborn baby,en,phrase,birth_registration,,vehicle_registration
+keyword (baseline),ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration,,
+keyword (baseline),late birth registration,en,official_term,late_birth_registration,1.0,late_birth_registration
+keyword (baseline),birth certificate after 30 days,en,phrase,late_birth_registration,5.0,driver_license_ab
+keyword (baseline),សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration,6.0,passport_new
+keyword (baseline),ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration,,
+keyword (baseline),marriage certificate,en,keyword,marriage_registration,2.0,birth_registration
+keyword (baseline),we want to get married officially,en,phrase,marriage_registration,,driver_license_ab
+keyword (baseline),សំបុត្រមរណភាព,km,official_term,death_registration,7.0,passport_new
+keyword (baseline),death certificate,en,keyword,death_registration,2.0,birth_registration
+keyword (baseline),register a death in the family,en,phrase,death_registration,4.0,driver_license_ab
+keyword (baseline),កែសំបុត្រកំណើត,km,phrase,civil_record_correction,8.0,passport_new
+keyword (baseline),correct my name on birth certificate,en,phrase,civil_record_correction,4.0,birth_registration
+keyword (baseline),fix a mistake in civil status record,en,phrase,civil_record_correction,1.0,civil_record_correction
+keyword (baseline),បណ្ណបើកបរ,km,official_term,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab,,
+keyword (baseline),driving license,en,keyword,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),motorbike licence,en,variant_spelling,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),how to take the driving test,en,phrase,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),driver licence type B car,en,phrase,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange,,
+keyword (baseline),convert foreign driving license,en,phrase,driver_license_exchange,2.0,driver_license_ab
+keyword (baseline),exchange my international driving permit,en,phrase,driver_license_exchange,2.0,driver_license_ab
+keyword (baseline),foreigner change license to Cambodian license,en,phrase,driver_license_exchange,2.0,driver_license_ab
+keyword (baseline),ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration,3.0,driver_license_ab
+keyword (baseline),ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration,,
+keyword (baseline),ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration,1.0,vehicle_registration
+keyword (baseline),register my car,en,phrase,vehicle_registration,1.0,vehicle_registration
+keyword (baseline),number plate for motorcycle,en,phrase,vehicle_registration,1.0,vehicle_registration
+keyword (baseline),vehicle registration fee,en,keyword,vehicle_registration,3.0,driver_license_ab
+keyword (baseline),ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration,,
+keyword (baseline),register a company,en,phrase,company_registration,4.0,driver_license_ab
+keyword (baseline),incorporate a business in Cambodia,en,phrase,company_registration,4.0,driver_license_ab
+keyword (baseline),company registration online,en,keyword,company_registration,1.0,company_registration
+keyword (baseline),ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration,,
+keyword (baseline),sole proprietorship,en,official_term,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+keyword (baseline),register my small shop,en,phrase,sole_proprietorship_registration,,vehicle_registration
+keyword (baseline),ទិដ្ឋាការ,km,official_term,tourist_evisa,,driver_license_ab
+keyword (baseline),tourist visa,en,keyword,tourist_evisa,3.0,driver_license_ab
+keyword (baseline),apply e-visa online,en,phrase,tourist_evisa,6.0,driver_license_ab
+keyword (baseline),visa to visit Cambodia,en,phrase,tourist_evisa,5.0,driver_license_ab
+keyword (baseline),ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services,,passport_new
+keyword (baseline),one window service office,en,official_term,owso_district_services,4.0,driver_license_ab
+keyword (baseline),district administration services,en,phrase,owso_district_services,2.0,vehicle_registration
+keyword (baseline),license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab,1.0,driver_license_ab
+keyword (baseline),passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal,1.0,passport_renewal
+tf-idf word,លិខិតឆ្លងដែន,km,official_term,passport_new,2.0,passport_renewal
+tf-idf word,ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new,2.0,passport_renewal
+tf-idf word,passport,en,keyword,passport_new,3.0,driver_license_exchange
+tf-idf word,how do I get a passport,en,phrase,passport_new,3.0,driver_license_exchange
+tf-idf word,pasport application,en,typo,passport_new,,driver_license_ab
+tf-idf word,បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal,1.0,passport_renewal
+tf-idf word,renew my passport,en,phrase,passport_renewal,2.0,driver_license_exchange
+tf-idf word,passport expired,en,phrase,passport_renewal,2.0,driver_license_exchange
+tf-idf word,អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card,3.0,civil_record_correction
+tf-idf word,ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card,1.0,national_id_card
+tf-idf word,khmer national id card,en,keyword,national_id_card,1.0,national_id_card
+tf-idf word,lost my ID card,en,phrase,national_id_card,2.0,vehicle_registration
+tf-idf word,សំបុត្រកំណើត,km,official_term,birth_registration,4.0,civil_record_correction
+tf-idf word,ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration,4.0,late_birth_registration
+tf-idf word,birth certificate,en,keyword,birth_registration,1.0,birth_registration
+tf-idf word,register my newborn baby,en,phrase,birth_registration,,vehicle_registration
+tf-idf word,ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration,3.0,company_registration
+tf-idf word,late birth registration,en,official_term,late_birth_registration,1.0,late_birth_registration
+tf-idf word,birth certificate after 30 days,en,phrase,late_birth_registration,5.0,driver_license_exchange
+tf-idf word,សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration,2.0,civil_record_correction
+tf-idf word,ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration,6.0,company_registration
+tf-idf word,marriage certificate,en,keyword,marriage_registration,1.0,marriage_registration
+tf-idf word,we want to get married officially,en,phrase,marriage_registration,,driver_license_exchange
+tf-idf word,សំបុត្រមរណភាព,km,official_term,death_registration,3.0,national_id_card
+tf-idf word,death certificate,en,keyword,death_registration,1.0,death_registration
+tf-idf word,register a death in the family,en,phrase,death_registration,4.0,driver_license_ab
+tf-idf word,កែសំបុត្រកំណើត,km,phrase,civil_record_correction,1.0,civil_record_correction
+tf-idf word,correct my name on birth certificate,en,phrase,civil_record_correction,,birth_registration
+tf-idf word,fix a mistake in civil status record,en,phrase,civil_record_correction,1.0,civil_record_correction
+tf-idf word,បណ្ណបើកបរ,km,official_term,driver_license_ab,2.0,driver_license_exchange
+tf-idf word,ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab,2.0,driver_license_exchange
+tf-idf word,បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf word,driving license,en,keyword,driver_license_ab,1.0,driver_license_ab
+tf-idf word,motorbike licence,en,variant_spelling,driver_license_ab,1.0,driver_license_ab
+tf-idf word,how to take the driving test,en,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf word,driver licence type B car,en,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf word,ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange,2.0,national_id_card
+tf-idf word,convert foreign driving license,en,phrase,driver_license_exchange,2.0,tourist_evisa
+tf-idf word,exchange my international driving permit,en,phrase,driver_license_exchange,2.0,tourist_evisa
+tf-idf word,foreigner change license to Cambodian license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+tf-idf word,ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration,11.0,national_id_card
+tf-idf word,ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf word,ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf word,register my car,en,phrase,vehicle_registration,2.0,driver_license_ab
+tf-idf word,number plate for motorcycle,en,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf word,vehicle registration fee,en,keyword,vehicle_registration,1.0,vehicle_registration
+tf-idf word,ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration,1.0,company_registration
+tf-idf word,register a company,en,phrase,company_registration,1.0,company_registration
+tf-idf word,incorporate a business in Cambodia,en,phrase,company_registration,1.0,company_registration
+tf-idf word,company registration online,en,keyword,company_registration,1.0,company_registration
+tf-idf word,ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration,2.0,company_registration
+tf-idf word,sole proprietorship,en,official_term,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+tf-idf word,register my small shop,en,phrase,sole_proprietorship_registration,,vehicle_registration
+tf-idf word,ទិដ្ឋាការ,km,official_term,tourist_evisa,,
+tf-idf word,tourist visa,en,keyword,tourist_evisa,1.0,tourist_evisa
+tf-idf word,apply e-visa online,en,phrase,tourist_evisa,1.0,tourist_evisa
+tf-idf word,visa to visit Cambodia,en,phrase,tourist_evisa,1.0,tourist_evisa
+tf-idf word,ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services,,passport_renewal
+tf-idf word,one window service office,en,official_term,owso_district_services,2.0,tourist_evisa
+tf-idf word,district administration services,en,phrase,owso_district_services,1.0,owso_district_services
+tf-idf word,license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf word,passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal,1.0,passport_renewal
+tf-idf char 2-4,លិខិតឆ្លងដែន,km,official_term,passport_new,1.0,passport_new
+tf-idf char 2-4,ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new,1.0,passport_new
+tf-idf char 2-4,passport,en,keyword,passport_new,3.0,driver_license_exchange
+tf-idf char 2-4,how do I get a passport,en,phrase,passport_new,5.0,driver_license_exchange
+tf-idf char 2-4,pasport application,en,typo,passport_new,6.0,driver_license_ab
+tf-idf char 2-4,បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal,2.0,passport_new
+tf-idf char 2-4,renew my passport,en,phrase,passport_renewal,3.0,driver_license_exchange
+tf-idf char 2-4,passport expired,en,phrase,passport_renewal,4.0,driver_license_exchange
+tf-idf char 2-4,អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card,2.0,late_birth_registration
+tf-idf char 2-4,ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card,2.0,civil_record_correction
+tf-idf char 2-4,khmer national id card,en,keyword,national_id_card,3.0,tourist_evisa
+tf-idf char 2-4,lost my ID card,en,phrase,national_id_card,6.0,tourist_evisa
+tf-idf char 2-4,សំបុត្រកំណើត,km,official_term,birth_registration,4.0,civil_record_correction
+tf-idf char 2-4,ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration,4.0,civil_record_correction
+tf-idf char 2-4,birth certificate,en,keyword,birth_registration,2.0,driver_license_exchange
+tf-idf char 2-4,register my newborn baby,en,phrase,birth_registration,10.0,tourist_evisa
+tf-idf char 2-4,ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration,11.0,civil_record_correction
+tf-idf char 2-4,late birth registration,en,official_term,late_birth_registration,2.0,tourist_evisa
+tf-idf char 2-4,birth certificate after 30 days,en,phrase,late_birth_registration,6.0,driver_license_exchange
+tf-idf char 2-4,សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration,3.0,civil_record_correction
+tf-idf char 2-4,ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration,3.0,civil_record_correction
+tf-idf char 2-4,marriage certificate,en,keyword,marriage_registration,3.0,driver_license_exchange
+tf-idf char 2-4,we want to get married officially,en,phrase,marriage_registration,6.0,tourist_evisa
+tf-idf char 2-4,សំបុត្រមរណភាព,km,official_term,death_registration,2.0,civil_record_correction
+tf-idf char 2-4,death certificate,en,keyword,death_registration,6.0,driver_license_exchange
+tf-idf char 2-4,register a death in the family,en,phrase,death_registration,6.0,tourist_evisa
+tf-idf char 2-4,កែសំបុត្រកំណើត,km,phrase,civil_record_correction,1.0,civil_record_correction
+tf-idf char 2-4,correct my name on birth certificate,en,phrase,civil_record_correction,5.0,driver_license_exchange
+tf-idf char 2-4,fix a mistake in civil status record,en,phrase,civil_record_correction,1.0,civil_record_correction
+tf-idf char 2-4,បណ្ណបើកបរ,km,official_term,driver_license_ab,2.0,driver_license_exchange
+tf-idf char 2-4,ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab,2.0,driver_license_exchange
+tf-idf char 2-4,driving license,en,keyword,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,motorbike licence,en,variant_spelling,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,how to take the driving test,en,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,driver licence type B car,en,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange,1.0,driver_license_exchange
+tf-idf char 2-4,convert foreign driving license,en,phrase,driver_license_exchange,2.0,tourist_evisa
+tf-idf char 2-4,exchange my international driving permit,en,phrase,driver_license_exchange,2.0,tourist_evisa
+tf-idf char 2-4,foreigner change license to Cambodian license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+tf-idf char 2-4,ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration,1.0,vehicle_registration
+tf-idf char 2-4,ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf char 2-4,ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf char 2-4,register my car,en,phrase,vehicle_registration,2.0,tourist_evisa
+tf-idf char 2-4,number plate for motorcycle,en,phrase,vehicle_registration,1.0,vehicle_registration
+tf-idf char 2-4,vehicle registration fee,en,keyword,vehicle_registration,2.0,tourist_evisa
+tf-idf char 2-4,ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration,1.0,company_registration
+tf-idf char 2-4,register a company,en,phrase,company_registration,4.0,tourist_evisa
+tf-idf char 2-4,incorporate a business in Cambodia,en,phrase,company_registration,5.0,driver_license_ab
+tf-idf char 2-4,company registration online,en,keyword,company_registration,2.0,tourist_evisa
+tf-idf char 2-4,ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration,2.0,company_registration
+tf-idf char 2-4,sole proprietorship,en,official_term,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+tf-idf char 2-4,register my small shop,en,phrase,sole_proprietorship_registration,6.0,tourist_evisa
+tf-idf char 2-4,ទិដ្ឋាការ,km,official_term,tourist_evisa,,driver_license_exchange
+tf-idf char 2-4,tourist visa,en,keyword,tourist_evisa,1.0,tourist_evisa
+tf-idf char 2-4,apply e-visa online,en,phrase,tourist_evisa,1.0,tourist_evisa
+tf-idf char 2-4,visa to visit Cambodia,en,phrase,tourist_evisa,1.0,tourist_evisa
+tf-idf char 2-4,ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services,14.0,passport_new
+tf-idf char 2-4,one window service office,en,official_term,owso_district_services,2.0,tourist_evisa
+tf-idf char 2-4,district administration services,en,phrase,owso_district_services,2.0,tourist_evisa
+tf-idf char 2-4,license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab,1.0,driver_license_ab
+tf-idf char 2-4,passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal,1.0,passport_renewal
+"tf-idf char 2-4, names only",លិខិតឆ្លងដែន,km,official_term,passport_new,,
+"tf-idf char 2-4, names only",ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new,,
+"tf-idf char 2-4, names only",passport,en,keyword,passport_new,1.0,passport_new
+"tf-idf char 2-4, names only",how do I get a passport,en,phrase,passport_new,1.0,passport_new
+"tf-idf char 2-4, names only",pasport application,en,typo,passport_new,1.0,passport_new
+"tf-idf char 2-4, names only",បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal,,driver_license_ab
+"tf-idf char 2-4, names only",renew my passport,en,phrase,passport_renewal,1.0,passport_renewal
+"tf-idf char 2-4, names only",passport expired,en,phrase,passport_renewal,2.0,passport_new
+"tf-idf char 2-4, names only",អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card,,driver_license_ab
+"tf-idf char 2-4, names only",ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card,,driver_license_ab
+"tf-idf char 2-4, names only",khmer national id card,en,keyword,national_id_card,1.0,national_id_card
+"tf-idf char 2-4, names only",lost my ID card,en,phrase,national_id_card,1.0,national_id_card
+"tf-idf char 2-4, names only",សំបុត្រកំណើត,km,official_term,birth_registration,,
+"tf-idf char 2-4, names only",ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration,,vehicle_registration
+"tf-idf char 2-4, names only",birth certificate,en,keyword,birth_registration,1.0,birth_registration
+"tf-idf char 2-4, names only",register my newborn baby,en,phrase,birth_registration,5.0,late_birth_registration
+"tf-idf char 2-4, names only",ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration,,vehicle_registration
+"tf-idf char 2-4, names only",late birth registration,en,official_term,late_birth_registration,1.0,late_birth_registration
+"tf-idf char 2-4, names only",birth certificate after 30 days,en,phrase,late_birth_registration,2.0,birth_registration
+"tf-idf char 2-4, names only",សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration,,
+"tf-idf char 2-4, names only",ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration,,vehicle_registration
+"tf-idf char 2-4, names only",marriage certificate,en,keyword,marriage_registration,1.0,marriage_registration
+"tf-idf char 2-4, names only",we want to get married officially,en,phrase,marriage_registration,1.0,marriage_registration
+"tf-idf char 2-4, names only",សំបុត្រមរណភាព,km,official_term,death_registration,,
+"tf-idf char 2-4, names only",death certificate,en,keyword,death_registration,2.0,birth_registration
+"tf-idf char 2-4, names only",register a death in the family,en,phrase,death_registration,1.0,death_registration
+"tf-idf char 2-4, names only",កែសំបុត្រកំណើត,km,phrase,civil_record_correction,,
+"tf-idf char 2-4, names only",correct my name on birth certificate,en,phrase,civil_record_correction,3.0,birth_registration
+"tf-idf char 2-4, names only",fix a mistake in civil status record,en,phrase,civil_record_correction,1.0,civil_record_correction
+"tf-idf char 2-4, names only",បណ្ណបើកបរ,km,official_term,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names only",ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names only",បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names only",driving license,en,keyword,driver_license_ab,2.0,driver_license_exchange
+"tf-idf char 2-4, names only",motorbike licence,en,variant_spelling,driver_license_ab,3.0,vehicle_registration
+"tf-idf char 2-4, names only",how to take the driving test,en,phrase,driver_license_ab,3.0,tourist_evisa
+"tf-idf char 2-4, names only",driver licence type B car,en,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names only",ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange,,driver_license_ab
+"tf-idf char 2-4, names only",convert foreign driving license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names only",exchange my international driving permit,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names only",foreigner change license to Cambodian license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names only",ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names only",ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration,,driver_license_ab
+"tf-idf char 2-4, names only",ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names only",register my car,en,phrase,vehicle_registration,8.0,national_id_card
+"tf-idf char 2-4, names only",number plate for motorcycle,en,phrase,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names only",vehicle registration fee,en,keyword,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names only",ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration,,vehicle_registration
+"tf-idf char 2-4, names only",register a company,en,phrase,company_registration,1.0,company_registration
+"tf-idf char 2-4, names only",incorporate a business in Cambodia,en,phrase,company_registration,9.0,civil_record_correction
+"tf-idf char 2-4, names only",company registration online,en,keyword,company_registration,1.0,company_registration
+"tf-idf char 2-4, names only",ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration,,vehicle_registration
+"tf-idf char 2-4, names only",sole proprietorship,en,official_term,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+"tf-idf char 2-4, names only",register my small shop,en,phrase,sole_proprietorship_registration,2.0,marriage_registration
+"tf-idf char 2-4, names only",ទិដ្ឋាការ,km,official_term,tourist_evisa,,driver_license_ab
+"tf-idf char 2-4, names only",tourist visa,en,keyword,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names only",apply e-visa online,en,phrase,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names only",visa to visit Cambodia,en,phrase,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names only",ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services,,vehicle_registration
+"tf-idf char 2-4, names only",one window service office,en,official_term,owso_district_services,1.0,owso_district_services
+"tf-idf char 2-4, names only",district administration services,en,phrase,owso_district_services,1.0,owso_district_services
+"tf-idf char 2-4, names only",license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names only",passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal,1.0,passport_renewal
+"tf-idf char 2-4, names 50% + content 50%",លិខិតឆ្លងដែន,km,official_term,passport_new,1.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",ធ្វើលិខិតឆ្លងដែនថ្មី,km,phrase,passport_new,1.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",passport,en,keyword,passport_new,1.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",how do I get a passport,en,phrase,passport_new,1.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",pasport application,en,typo,passport_new,1.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",បន្តលិខិតឆ្លងដែន,km,phrase,passport_renewal,3.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",renew my passport,en,phrase,passport_renewal,1.0,passport_renewal
+"tf-idf char 2-4, names 50% + content 50%",passport expired,en,phrase,passport_renewal,2.0,passport_new
+"tf-idf char 2-4, names 50% + content 50%",អត្តសញ្ញាណបណ្ណ,km,official_term,national_id_card,3.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",ធ្វើអត្តសញ្ញាណប័ណ្ណថ្មី,km,variant_spelling,national_id_card,3.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",khmer national id card,en,keyword,national_id_card,1.0,national_id_card
+"tf-idf char 2-4, names 50% + content 50%",lost my ID card,en,phrase,national_id_card,1.0,national_id_card
+"tf-idf char 2-4, names 50% + content 50%",សំបុត្រកំណើត,km,official_term,birth_registration,4.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីកំណើតកូន,km,phrase,birth_registration,5.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",birth certificate,en,keyword,birth_registration,1.0,birth_registration
+"tf-idf char 2-4, names 50% + content 50%",register my newborn baby,en,phrase,birth_registration,5.0,late_birth_registration
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីកំណើតយឺត,km,phrase,late_birth_registration,12.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",late birth registration,en,official_term,late_birth_registration,1.0,late_birth_registration
+"tf-idf char 2-4, names 50% + content 50%",birth certificate after 30 days,en,phrase,late_birth_registration,2.0,birth_registration
+"tf-idf char 2-4, names 50% + content 50%",សំបុត្រអាពាហ៍ពិពាហ៍,km,official_term,marriage_registration,3.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីអាពាហ៍ពិពាហ៍,km,phrase,marriage_registration,4.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",marriage certificate,en,keyword,marriage_registration,1.0,marriage_registration
+"tf-idf char 2-4, names 50% + content 50%",we want to get married officially,en,phrase,marriage_registration,1.0,marriage_registration
+"tf-idf char 2-4, names 50% + content 50%",សំបុត្រមរណភាព,km,official_term,death_registration,2.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",death certificate,en,keyword,death_registration,2.0,birth_registration
+"tf-idf char 2-4, names 50% + content 50%",register a death in the family,en,phrase,death_registration,1.0,death_registration
+"tf-idf char 2-4, names 50% + content 50%",កែសំបុត្រកំណើត,km,phrase,civil_record_correction,1.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",correct my name on birth certificate,en,phrase,civil_record_correction,3.0,birth_registration
+"tf-idf char 2-4, names 50% + content 50%",fix a mistake in civil status record,en,phrase,civil_record_correction,1.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",បណ្ណបើកបរ,km,official_term,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",ប្រឡងបណ្ណបើកបរ,km,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",បណ្ណបើកបរម៉ូតូ,km,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",driving license,en,keyword,driver_license_ab,2.0,driver_license_exchange
+"tf-idf char 2-4, names 50% + content 50%",motorbike licence,en,variant_spelling,driver_license_ab,3.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",how to take the driving test,en,phrase,driver_license_ab,2.0,driver_license_exchange
+"tf-idf char 2-4, names 50% + content 50%",driver licence type B car,en,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",ប្តូរបណ្ណបើកបរបរទេស,km,phrase,driver_license_exchange,2.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",convert foreign driving license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names 50% + content 50%",exchange my international driving permit,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names 50% + content 50%",foreigner change license to Cambodian license,en,phrase,driver_license_exchange,1.0,driver_license_exchange
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីយានជំនិះ,km,official_term,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",ផ្លាកលេខម៉ូតូ,km,phrase,vehicle_registration,2.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីរថយន្ត,km,phrase,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",register my car,en,phrase,vehicle_registration,8.0,national_id_card
+"tf-idf char 2-4, names 50% + content 50%",number plate for motorcycle,en,phrase,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",vehicle registration fee,en,keyword,vehicle_registration,1.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីក្រុមហ៊ុន,km,phrase,company_registration,2.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",register a company,en,phrase,company_registration,1.0,company_registration
+"tf-idf char 2-4, names 50% + content 50%",incorporate a business in Cambodia,en,phrase,company_registration,8.0,civil_record_correction
+"tf-idf char 2-4, names 50% + content 50%",company registration online,en,keyword,company_registration,1.0,company_registration
+"tf-idf char 2-4, names 50% + content 50%",ចុះបញ្ជីសហគ្រាសឯកបុគ្គល,km,official_term,sole_proprietorship_registration,3.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",sole proprietorship,en,official_term,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+"tf-idf char 2-4, names 50% + content 50%",register my small shop,en,phrase,sole_proprietorship_registration,1.0,sole_proprietorship_registration
+"tf-idf char 2-4, names 50% + content 50%",ទិដ្ឋាការ,km,official_term,tourist_evisa,,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",tourist visa,en,keyword,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names 50% + content 50%",apply e-visa online,en,phrase,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names 50% + content 50%",visa to visit Cambodia,en,phrase,tourist_evisa,1.0,tourist_evisa
+"tf-idf char 2-4, names 50% + content 50%",ច្រកចេញចូលតែមួយ,km,official_term,owso_district_services,14.0,vehicle_registration
+"tf-idf char 2-4, names 50% + content 50%",one window service office,en,official_term,owso_district_services,1.0,owso_district_services
+"tf-idf char 2-4, names 50% + content 50%",district administration services,en,phrase,owso_district_services,1.0,owso_district_services
+"tf-idf char 2-4, names 50% + content 50%",license បណ្ណបើកបរ type A,mixed,phrase,driver_license_ab,1.0,driver_license_ab
+"tf-idf char 2-4, names 50% + content 50%",passport លិខិតឆ្លងដែន renew,mixed,phrase,passport_renewal,1.0,passport_renewal

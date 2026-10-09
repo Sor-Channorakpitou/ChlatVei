@@ -1,0 +1,96 @@
+@if (loadError()) { <p class="error">{{ 'gen.error' | t }}</p> }
+
+<div class="layout">
+  <section class="card stack-sm queue">
+    <div class="filters" role="group">
+      @for (o of origins; track o) {
+        <button type="button" class="chip" [attr.aria-pressed]="originFilter() === o" (click)="setOrigin(o)">{{ originKey(o) | t }}</button>
+      }
+    </div>
+    <div class="label">{{ 'adm.queue' | t: { n: queue()?.length ?? 0 } }}</div>
+    @if (queue() === null) { <p class="muted">{{ 'gen.loading' | t }}</p> }
+    @for (q of queue(); track q.id) {
+      <button type="button" class="qitem" [attr.aria-current]="q.id === selectedId()" (click)="select(q)">
+        <span class="top">
+          <span class="badge b-warn">{{ q.status }}</span>
+          <span class="muted">{{ q.contentType }}</span>
+        </span>
+        <strong>{{ i18n.pick(q.label.km, q.label.en) }}</strong>
+        <span class="muted">
+          {{ i18n.pick(q.service.nameKm, q.service.nameEn) }} · {{ q.origin }}
+          @if (q.confidence !== null) { · {{ (q.confidence * 100).toFixed(0) }}% }
+        </span>
+      </button>
+    } @empty {
+      @if (queue() !== null) { <p class="muted">{{ 'adm.queueEmpty' | t }}</p> }
+    }
+  </section>
+
+  <section class="card stack detail">
+    @if (message(); as m) {
+      <p [class]="m.kind === 'ok' ? 'toast' : 'error'" role="status">{{ m.text }}</p>
+    }
+
+    @if (selected(); as item) {
+      <h2>{{ i18n.pick(item.service.nameKm, item.service.nameEn) }}</h2>
+      @if (item.origin === 'EXTRACTED') {
+        <p class="extracted">
+          <span class="badge b-warn">{{ 'adm.origin.EXTRACTED' | t }}@if (item.confidence !== null) { · {{ 'adm.confidence' | t: { n: (item.confidence * 100).toFixed(0) } }} }</span>
+          {{ 'adm.extractedNote' | t }}
+        </p>
+      }
+
+      <div class="compare">
+        <div class="box stack-sm">
+          <div class="label">{{ 'adm.proposed' | t }}</div>
+          <dl>
+            @for (e of entries(item.values); track e[0]) { <dt>{{ e[0] }}</dt><dd>{{ e[1] }}</dd> }
+          </dl>
+          @if (item.replaces; as r) {
+            <div class="replaces">
+              <div class="label">{{ 'adm.replaces' | t }}</div>
+              <dl>
+                @for (e of entries(r.values); track e[0]) { <dt>{{ e[0] }}</dt><dd>{{ e[1] }}</dd> }
+              </dl>
+            </div>
+          }
+        </div>
+        <div class="box stack-sm">
+          <div class="label">{{ 'adm.evidence' | t }}</div>
+          <blockquote>{{ item.evidence }}</blockquote>
+          @if (item.source; as src) {
+            <p class="muted">
+              {{ src.code }} · {{ src.tier }} ·
+              <span [class]="src.status === 'VERIFIED' ? 'badge b-ok' : 'badge b-warn'">{{ src.status }}</span><br />
+              <a [href]="src.url" target="_blank" rel="noopener">{{ src.name }}</a>
+            </p>
+            @if (src.status !== 'VERIFIED') { <p class="error">{{ 'adm.sourceNotVerified' | t }}</p> }
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="km-text">{{ 'adm.khmer' | t }}</label>
+        <div class="row nowrap">
+          <input id="km-text" lang="km" [value]="khmer()" (input)="khmer.set($any($event.target).value)" [placeholder]="'adm.khmerPh' | t" />
+          <button type="button" class="btn ghost" [disabled]="busy() || !khmer().trim() || khmer().trim() === savedKhmer()" (click)="saveKhmer()">
+            {{ 'gen.save' | t }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="comment">{{ 'adm.comment' | t }}</label>
+        <input id="comment" [value]="comment()" (input)="comment.set($any($event.target).value)" maxlength="1000" />
+      </div>
+
+      <div class="row">
+        <button type="button" class="btn ok" [disabled]="busy() || !canApprove()" (click)="approve()">{{ 'adm.approve' | t }}</button>
+        <button type="button" class="btn bad" [disabled]="busy() || !comment().trim()" (click)="reject()">{{ 'adm.reject' | t }}</button>
+      </div>
+      @if (!savedKhmer().trim()) { <p class="muted">{{ 'adm.approveDisabled' | t }}</p> }
+    } @else {
+      <p class="muted">{{ 'adm.selectItem' | t }}</p>
+    }
+  </section>
+</div>

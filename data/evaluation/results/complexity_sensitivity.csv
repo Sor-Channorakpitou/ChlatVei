@@ -1,0 +1,4 @@
+,baseline_rank,mean_rank,best,worst
+driver_license_ab,1.0,1.185,1.0,3.0
+driver_license_exchange,2.0,2.1565,1.0,3.0
+vehicle_registration,3.0,2.6585,1.0,3.0

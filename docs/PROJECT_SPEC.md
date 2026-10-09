@@ -4,9 +4,8 @@
 
 ### 1. Product Identity
 
-- **Product name:** ChlatVei
-- **Khmer name:** ឆ្លាតវៃ
-- **Meaning:** Smart / intelligent
+- **Product name:** ChlatVei (the name and logo are always written in English)
+- **Meaning:** Smart / intelligent (from the Khmer word for "clever")
 - **Tagline:** Smarter Citizens, Simpler Services.
 
 ### 2. Product Vision
@@ -162,7 +161,7 @@ Normalize the relationships properly. Avoid storing a whole service as one giant
                     ChlatVei
         ┌──────────────┴──────────────┐
      Frontend                       Backend
-   React + TS                  NestJS + TypeScript
+   Angular PWA                 NestJS + TypeScript
                          ┌────────────┼────────────┐
                       PostgreSQL   Search       ML Service
                                                Python/FastAPI
@@ -170,7 +169,7 @@ Normalize the relationships properly. Avoid storing a whole service as one giant
                                               pandas/sklearn
 ```
 
-- **Frontend:** React, TypeScript, Tailwind CSS, React Router, an API client. Pages: Home, Search, Service detail, Checklist, Profile, Feedback, Admin dashboard, Admin review.
+- **Frontend:** Angular (mobile-first PWA; see ADR-006). The original spec said React. Pages: Home, Search, Service detail, Checklist, Profile, Feedback, Admin dashboard, Admin review.
 - **Backend:** NestJS, TypeScript, PostgreSQL, REST. Modules: `auth`, `users`, `services`, `requirements`, `steps`, `sources`, `verification`, `feedback`, `checklists`, `admin`, `analytics`. Keep it a modular monolith with no unnecessary microservices.
 - **ML service:** a separate Python service, because it has a different runtime and purpose.
 

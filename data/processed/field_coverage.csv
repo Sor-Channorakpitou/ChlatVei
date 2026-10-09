@@ -1,0 +1,16 @@
+service_slug,eligibility_status,eligibility_count,required_document_status,required_document_count,step_status,step_count,fee_status,fee_count,processing_time_status,processing_time_count,location_status,location_count,contact_status,contact_count,completeness
+passport_new,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+passport_renewal,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+national_id_card,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+birth_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+late_birth_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+marriage_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+death_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+civil_record_correction,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+driver_license_ab,stated,2,stated,3,stated,3,stated,4,not_stated,0,stated,2,stated,1,0.857
+driver_license_exchange,stated,1,stated,6,not_stated,0,stated,1,not_stated,0,stated,1,stated,1,0.714
+vehicle_registration,not_stated,0,stated,4,stated,3,stated,2,stated,1,stated,1,stated,1,0.857
+company_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+sole_proprietorship_registration,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+tourist_evisa,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,
+owso_district_services,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,unannotated,0,

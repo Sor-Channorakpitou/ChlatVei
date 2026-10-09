@@ -1,0 +1,5 @@
+requests==2.32.3
+beautifulsoup4==4.12.3
+pandas>=2.2
+pytest==9.0.3
+pypdf[image]==5.1.0
