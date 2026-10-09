@@ -16,6 +16,8 @@ How an administrator keeps ChlatVei's information correct, in the order you woul
 | **Reject** | The page is not official or not relevant |
 | **Mark outdated** | The page no longer reflects current rules |
 | **Details** | Shows when copies were collected (with fingerprints) and which services use this source |
+
+**When a source changes.** When a new copy with different content is registered for a source that already had one, ChlatVei moves the source back to **Pending** and records `source.changed` in the audit log. Published content stays as it is, but nothing new can be approved against the source until you check what changed and verify it again. The data team's change report (`data/processed/change_reports/`) lists the changed lines and which facts need a fresh look.
 | **Extract into review queue** (inside Details, per service) | Runs the automatic extractor on the latest copy. The findings appear in Review as **Extracted**, with a confidence score. Running it twice does not create duplicates |
 
 ## 2. Review: approve or reject
