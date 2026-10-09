@@ -51,6 +51,23 @@ Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`, ...).
 
 Never commit `.env` files, API keys, passwords, database credentials, or tokens. Use `.env.example` to document the required variables.
 
+## Run everything without Docker (one command)
+
+Needs Node 20.11+, Python 3 and a local PostgreSQL. One-time setup:
+
+```bash
+psql -U postgres -p 5432 -f scripts/local-db.sql   # creates the chlatvei user and databases
+cp backend/.env.example backend/.env               # set the secrets; use port 5432 in DATABASE_URL
+npm run setup                                      # venv, npm packages, migrations, seed data
+```
+
+Then start the ML service, backend and frontend together, with live reload:
+
+```bash
+npm run dev
+# open http://localhost:4200; Ctrl+C stops everything
+```
+
 ## Run everything with Docker
 
 ```bash
