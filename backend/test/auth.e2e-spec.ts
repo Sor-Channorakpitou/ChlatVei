@@ -1,0 +1,108 @@
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import { PrismaService } from '../src/prisma/prisma.service';
+import { bearer, createApp, resetDb } from './helpers';
+
+const REFRESH_COOKIE = 'chlatvei_refresh';
+
+function refreshCookie(res: request.Response): string {
+  const raw = res.headers['set-cookie'] as unknown as string[] | undefined;
+  const cookie = raw?.find((c) => c.startsWith(`${REFRESH_COOKIE}=`));
+  if (!cookie) throw new Error('No refresh cookie set');
+  return cookie.split(';')[0];
+}
+
+describe('Auth', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+  const http = () => request(app.getHttpServer());
+
+  beforeAll(async () => ({ app, prisma } = await createApp()));
+  beforeEach(() => resetDb(prisma));
+  afterAll(() => app.close());
+
+  const register = (body: object) => http().post('/api/auth/register').send(body);
+  const valid = { email: 'Dara@Example.test', password: 'mekong-river-2026', displayName: 'Dara' };
+
+  it('registers a citizen, normalizes the email and sets an httpOnly refresh cookie', async () => {
+    const res = await register(valid).expect(201);
+    expect(res.body.data.user).toMatchObject({ email: 'dara@example.test', role: 'CITIZEN', preferredLanguage: 'km' });
+    expect(res.body.data.accessToken).toEqual(expect.any(String));
+    expect(res.body.data.user.passwordHash).toBeUndefined();
+
+    const cookie = (res.headers['set-cookie'] as unknown as string[]).join(';');
+    expect(cookie).toContain('HttpOnly');
+    expect(cookie).toContain('SameSite=Strict');
+    expect(cookie).toContain('Path=/api/auth');
+
+    const stored = await prisma.user.findUniqueOrThrow({ where: { email: 'dara@example.test' } });
+    expect(stored.passwordHash).toMatch(/^\$argon2id\$/);
+  });
+
+  it('cannot self-register as an admin', async () => {
+    const res = await register({ ...valid, role: 'ADMIN' }).expect(400);
+    expect(res.body.error.code).toBe('VALIDATION_FAILED');
+    expect(await prisma.user.count()).toBe(0);
+  });
+
+  it('rejects duplicate emails regardless of case', async () => {
+    await register(valid).expect(201);
+    const res = await register({ ...valid, email: 'DARA@example.test' }).expect(409);
+    expect(res.body.error.code).toBe('CONFLICT');
+  });
+
+  it('rejects weak and common passwords', async () => {
+    await register({ ...valid, password: 'short' }).expect(400);
+    const res = await register({ ...valid, password: 'password123' }).expect(422);
+    expect(res.body.error.code).toBe('BUSINESS_RULE');
+  });
+
+  it('gives the same error for an unknown email and a wrong password', async () => {
+    await register(valid).expect(201);
+    const unknown = await http().post('/api/auth/login').send({ email: 'nobody@example.test', password: 'whatever-123' }).expect(401);
+    const wrong = await http().post('/api/auth/login').send({ email: valid.email, password: 'wrong-password-1' }).expect(401);
+    expect(unknown.body.error.message).toBe(wrong.body.error.message);
+  });
+
+  it('logs in and reads the profile', async () => {
+    await register(valid).expect(201);
+    const login = await http().post('/api/auth/login').send({ email: valid.email, password: valid.password }).expect(200);
+    const me = await http().get('/api/users/me').set(bearer(login.body.data.accessToken)).expect(200);
+    expect(me.body.data.email).toBe('dara@example.test');
+  });
+
+  it('rejects requests with a missing or tampered token', async () => {
+    await http().get('/api/users/me').expect(401);
+    const res = await http().get('/api/users/me').set(bearer('not.a.jwt')).expect(401);
+    expect(res.body.error.code).toBe('UNAUTHENTICATED');
+  });
+
+  it('rotates refresh tokens and revokes the family when an old token is reused', async () => {
+    const reg = await register(valid).expect(201);
+    const first = refreshCookie(reg);
+
+    const r1 = await http().post('/api/auth/refresh').set('Cookie', first).expect(200);
+    const second = refreshCookie(r1);
+    expect(second).not.toBe(first);
+
+    // Reusing the rotated (old) token looks like theft: it fails...
+    await http().post('/api/auth/refresh').set('Cookie', first).expect(401);
+    // ...and the legitimate newer token is revoked too.
+    await http().post('/api/auth/refresh').set('Cookie', second).expect(401);
+  });
+
+  it('logout revokes the refresh token', async () => {
+    const reg = await register(valid).expect(201);
+    const cookie = refreshCookie(reg);
+    await http().post('/api/auth/logout').set('Cookie', cookie).expect(204);
+    await http().post('/api/auth/refresh').set('Cookie', cookie).expect(401);
+  });
+
+  it('updates own profile but ignores attempts to change role', async () => {
+    const reg = await register(valid).expect(201);
+    const token = reg.body.data.accessToken;
+    await http().patch('/api/users/me').set(bearer(token)).send({ role: 'ADMIN' }).expect(400);
+    const res = await http().patch('/api/users/me').set(bearer(token)).send({ preferredLanguage: 'en' }).expect(200);
+    expect(res.body.data).toMatchObject({ preferredLanguage: 'en', role: 'CITIZEN' });
+  });
+});

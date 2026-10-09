@@ -1,0 +1,21 @@
+# Local development services. Phase 10 adds frontend, backend and ml-service.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-chlatvei}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chlatvei_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-chlatvei}
+    ports:
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/prisma/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-chlatvei}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

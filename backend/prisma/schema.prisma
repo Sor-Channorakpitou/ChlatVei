@@ -1,0 +1,661 @@
+// ChlatVei database schema.
+// Design: docs/architecture/02_data_model.md and ADR-003.
+//
+// Content tables (Requirement, ServiceStep, Fee, ProcessingTime, ServiceLocation)
+// share the same "ContentMeta" block: status, origin, provenance, supersedes chain,
+// and review fields. Keep that block identical in all five models.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────
+
+enum Role {
+  CITIZEN
+  ADMIN
+}
+
+enum Language {
+  km
+  en
+}
+
+enum GovernmentLevel {
+  NATIONAL
+  PROVINCIAL
+  DISTRICT
+  COMMUNE
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+/// Lifecycle of content rows and sources (spec §8).
+enum ContentStatus {
+  PENDING
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  OUTDATED
+}
+
+enum ContentOrigin {
+  MANUAL
+  IMPORTED
+  EXTRACTED
+}
+
+enum RequirementKind {
+  DOCUMENT
+  ELIGIBILITY
+  CONDITION
+}
+
+enum LocationChannel {
+  IN_PERSON
+  ONLINE
+}
+
+enum SourceType {
+  WEB_PAGE
+  PDF
+  LAW_RECORD
+}
+
+enum SourceTier {
+  T1
+  T2
+  T3
+}
+
+enum SourceRelevance {
+  PRIMARY
+  SUPPORTING
+  LEGAL_BASIS
+  CONTEXT
+}
+
+enum GapField {
+  ELIGIBILITY
+  DOCUMENTS
+  STEPS
+  FEES
+  PROCESSING_TIME
+  LOCATIONS
+}
+
+enum EntityType {
+  REQUIREMENT
+  STEP
+  FEE
+  PROCESSING_TIME
+  LOCATION
+  SOURCE
+}
+
+enum VerificationAction {
+  START_REVIEW
+  APPROVE
+  REJECT
+  MARK_OUTDATED
+}
+
+enum ChangeType {
+  ADDED
+  CHANGED
+  REMOVED
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+enum PredictionKind {
+  COMPLEXITY
+}
+
+enum FeedbackKind {
+  RATING
+  REPORT_UNCLEAR
+  REPORT_OUTDATED
+}
+
+enum FeedbackOutcome {
+  COMPLETED
+  IN_PROGRESS
+  GAVE_UP
+  NOT_STARTED
+}
+
+enum FeedbackStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+// ─── Identity ─────────────────────────────────────────────────────────────
+
+model User {
+  id                String    @id @default(uuid()) @db.Uuid
+  /// Always stored lower-cased by the application
+  email             String    @unique
+  passwordHash      String    @map("password_hash")
+  displayName       String    @map("display_name")
+  role              Role      @default(CITIZEN)
+  preferredLanguage Language  @default(km) @map("preferred_language")
+  isActive          Boolean   @default(true) @map("is_active")
+  lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  refreshTokens RefreshToken[]
+  checklists    Checklist[]
+  feedback      Feedback[]
+  verifications Verification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  /// SHA-256 of the token; the token itself is never stored.
+  tokenHash String    @unique @map("token_hash") @db.Char(64)
+  /// Rotation chain: reuse of a revoked token revokes the whole family.
+  familyId  String    @map("family_id") @db.Uuid
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@map("refresh_tokens")
+}
+
+// ─── Catalogue ────────────────────────────────────────────────────────────
+
+model Category {
+  id       String @id @default(uuid()) @db.Uuid
+  slug     String @unique
+  nameKm   String @map("name_km")
+  nameEn   String @map("name_en")
+  position Int    @default(0)
+
+  services Service[]
+
+  @@map("categories")
+}
+
+model Service {
+  id                String          @id @default(uuid()) @db.Uuid
+  slug              String          @unique
+  categoryId        String          @map("category_id") @db.Uuid
+  /// Required before publishing (Khmer first); may be empty while DRAFT.
+  nameKm            String?         @map("name_km")
+  nameEn            String?         @map("name_en")
+  summaryKm         String?         @map("summary_km")
+  summaryEn         String?         @map("summary_en")
+  responsibleBodyKm String?         @map("responsible_body_km")
+  responsibleBodyEn String?         @map("responsible_body_en")
+  governmentLevel   GovernmentLevel @default(NATIONAL) @map("government_level")
+  publishStatus     PublishStatus   @default(DRAFT) @map("publish_status")
+  /// Maintained by the verification workflow on every approval.
+  lastVerifiedAt    DateTime?       @map("last_verified_at") @db.Timestamptz
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  category        Category          @relation(fields: [categoryId], references: [id])
+  requirements    Requirement[]
+  steps           ServiceStep[]
+  fees            Fee[]
+  processingTimes ProcessingTime[]
+  locations       ServiceLocation[]
+  gaps            FieldGap[]
+  sources         ServiceSource[]
+  changeRecords   ChangeRecord[]
+  feedback        Feedback[]
+  checklists      Checklist[]
+  extractionJobs  ExtractionJob[]
+  predictions     MlPrediction[]
+
+  @@index([publishStatus])
+  /// Trigram search (ADR-005): works for Khmer, which has no spaces between words
+  @@index([nameKm(ops: raw("gin_trgm_ops"))], type: Gin, map: "services_name_km_trgm_idx")
+  @@index([nameEn(ops: raw("gin_trgm_ops"))], type: Gin, map: "services_name_en_trgm_idx")
+  @@map("services")
+}
+
+// ─── Content (each has the ContentMeta block) ─────────────────────────────
+
+model Requirement {
+  id        String          @id @default(uuid()) @db.Uuid
+  serviceId String          @map("service_id") @db.Uuid
+  kind      RequirementKind
+  /// Khmer text is required before approval; may be empty while PENDING.
+  textKm    String?         @map("text_km")
+  textEn    String?         @map("text_en")
+  appliesTo String?         @map("applies_to")
+  position  Int             @default(0)
+
+  // ContentMeta
+  status           ContentStatus @default(PENDING)
+  origin           ContentOrigin @default(MANUAL)
+  supersedesId     String?       @map("supersedes_id") @db.Uuid
+  sourceId         String?       @map("source_id") @db.Uuid
+  sourceSnapshotId String?       @map("source_snapshot_id") @db.Uuid
+  evidence         String?
+  extractionJobId  String?       @map("extraction_job_id") @db.Uuid
+  confidence       Float?        @db.Real
+  createdById      String?       @map("created_by") @db.Uuid
+  verifiedById     String?       @map("verified_by") @db.Uuid
+  verifiedAt       DateTime?     @map("verified_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  service        Service         @relation(fields: [serviceId], references: [id])
+  supersedes     Requirement?    @relation("RequirementVersions", fields: [supersedesId], references: [id])
+  supersededBy   Requirement[]   @relation("RequirementVersions")
+  source         Source?         @relation(fields: [sourceId], references: [id])
+  sourceSnapshot SourceSnapshot? @relation(fields: [sourceSnapshotId], references: [id])
+  extractionJob  ExtractionJob?  @relation(fields: [extractionJobId], references: [id])
+  checklistItems ChecklistItem[]
+
+  @@index([serviceId, status])
+  @@index([textKm(ops: raw("gin_trgm_ops"))], type: Gin, map: "requirements_text_km_trgm_idx")
+  @@map("requirements")
+}
+
+model ServiceStep {
+  id        String  @id @default(uuid()) @db.Uuid
+  serviceId String  @map("service_id") @db.Uuid
+  position  Int     @default(0)
+  titleKm   String? @map("title_km")
+  titleEn   String? @map("title_en")
+  detailKm  String? @map("detail_km")
+  detailEn  String? @map("detail_en")
+  appliesTo String? @map("applies_to")
+
+  // ContentMeta
+  status           ContentStatus @default(PENDING)
+  origin           ContentOrigin @default(MANUAL)
+  supersedesId     String?       @map("supersedes_id") @db.Uuid
+  sourceId         String?       @map("source_id") @db.Uuid
+  sourceSnapshotId String?       @map("source_snapshot_id") @db.Uuid
+  evidence         String?
+  extractionJobId  String?       @map("extraction_job_id") @db.Uuid
+  confidence       Float?        @db.Real
+  createdById      String?       @map("created_by") @db.Uuid
+  verifiedById     String?       @map("verified_by") @db.Uuid
+  verifiedAt       DateTime?     @map("verified_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  service        Service         @relation(fields: [serviceId], references: [id])
+  supersedes     ServiceStep?    @relation("StepVersions", fields: [supersedesId], references: [id])
+  supersededBy   ServiceStep[]   @relation("StepVersions")
+  source         Source?         @relation(fields: [sourceId], references: [id])
+  sourceSnapshot SourceSnapshot? @relation(fields: [sourceSnapshotId], references: [id])
+  extractionJob  ExtractionJob?  @relation(fields: [extractionJobId], references: [id])
+  checklistItems ChecklistItem[]
+  feedback       Feedback[]
+
+  @@index([serviceId, status])
+  @@map("service_steps")
+}
+
+model Fee {
+  id        String  @id @default(uuid()) @db.Uuid
+  serviceId String  @map("service_id") @db.Uuid
+  amount    Decimal @db.Decimal(14, 2)
+  /// KHR or USD (CHECK constraint in migration)
+  currency  String  @db.Char(3)
+  labelKm   String? @map("label_km")
+  labelEn   String? @map("label_en")
+  appliesTo String? @map("applies_to")
+
+  // ContentMeta
+  status           ContentStatus @default(PENDING)
+  origin           ContentOrigin @default(MANUAL)
+  supersedesId     String?       @map("supersedes_id") @db.Uuid
+  sourceId         String?       @map("source_id") @db.Uuid
+  sourceSnapshotId String?       @map("source_snapshot_id") @db.Uuid
+  evidence         String?
+  extractionJobId  String?       @map("extraction_job_id") @db.Uuid
+  confidence       Float?        @db.Real
+  createdById      String?       @map("created_by") @db.Uuid
+  verifiedById     String?       @map("verified_by") @db.Uuid
+  verifiedAt       DateTime?     @map("verified_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  service        Service         @relation(fields: [serviceId], references: [id])
+  supersedes     Fee?            @relation("FeeVersions", fields: [supersedesId], references: [id])
+  supersededBy   Fee[]           @relation("FeeVersions")
+  source         Source?         @relation(fields: [sourceId], references: [id])
+  sourceSnapshot SourceSnapshot? @relation(fields: [sourceSnapshotId], references: [id])
+  extractionJob  ExtractionJob?  @relation(fields: [extractionJobId], references: [id])
+
+  @@index([serviceId, status])
+  @@map("fees")
+}
+
+model ProcessingTime {
+  id        String  @id @default(uuid()) @db.Uuid
+  serviceId String  @map("service_id") @db.Uuid
+  minDays   Int?    @map("min_days")
+  maxDays   Int?    @map("max_days")
+  textKm    String? @map("text_km")
+  textEn    String? @map("text_en")
+  appliesTo String? @map("applies_to")
+
+  // ContentMeta
+  status           ContentStatus @default(PENDING)
+  origin           ContentOrigin @default(MANUAL)
+  supersedesId     String?       @map("supersedes_id") @db.Uuid
+  sourceId         String?       @map("source_id") @db.Uuid
+  sourceSnapshotId String?       @map("source_snapshot_id") @db.Uuid
+  evidence         String?
+  extractionJobId  String?       @map("extraction_job_id") @db.Uuid
+  confidence       Float?        @db.Real
+  createdById      String?       @map("created_by") @db.Uuid
+  verifiedById     String?       @map("verified_by") @db.Uuid
+  verifiedAt       DateTime?     @map("verified_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  service        Service          @relation(fields: [serviceId], references: [id])
+  supersedes     ProcessingTime?  @relation("ProcessingTimeVersions", fields: [supersedesId], references: [id])
+  supersededBy   ProcessingTime[] @relation("ProcessingTimeVersions")
+  source         Source?          @relation(fields: [sourceId], references: [id])
+  sourceSnapshot SourceSnapshot?  @relation(fields: [sourceSnapshotId], references: [id])
+  extractionJob  ExtractionJob?   @relation(fields: [extractionJobId], references: [id])
+
+  @@index([serviceId, status])
+  @@map("processing_times")
+}
+
+model ServiceLocation {
+  id        String          @id @default(uuid()) @db.Uuid
+  serviceId String          @map("service_id") @db.Uuid
+  nameKm    String?         @map("name_km")
+  nameEn    String?         @map("name_en")
+  addressKm String?         @map("address_km")
+  addressEn String?         @map("address_en")
+  channel   LocationChannel @default(IN_PERSON)
+  url       String?
+  phone     String?
+  hoursText String?         @map("hours_text")
+  appliesTo String?         @map("applies_to")
+
+  // ContentMeta
+  status           ContentStatus @default(PENDING)
+  origin           ContentOrigin @default(MANUAL)
+  supersedesId     String?       @map("supersedes_id") @db.Uuid
+  sourceId         String?       @map("source_id") @db.Uuid
+  sourceSnapshotId String?       @map("source_snapshot_id") @db.Uuid
+  evidence         String?
+  extractionJobId  String?       @map("extraction_job_id") @db.Uuid
+  confidence       Float?        @db.Real
+  createdById      String?       @map("created_by") @db.Uuid
+  verifiedById     String?       @map("verified_by") @db.Uuid
+  verifiedAt       DateTime?     @map("verified_at") @db.Timestamptz
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  service        Service           @relation(fields: [serviceId], references: [id])
+  supersedes     ServiceLocation?  @relation("LocationVersions", fields: [supersedesId], references: [id])
+  supersededBy   ServiceLocation[] @relation("LocationVersions")
+  source         Source?           @relation(fields: [sourceId], references: [id])
+  sourceSnapshot SourceSnapshot?   @relation(fields: [sourceSnapshotId], references: [id])
+  extractionJob  ExtractionJob?    @relation(fields: [extractionJobId], references: [id])
+
+  @@index([serviceId, status])
+  @@map("service_locations")
+}
+
+/// "The source was checked and does not state this field" (unknown ≠ none).
+model FieldGap {
+  id          String   @id @default(uuid()) @db.Uuid
+  serviceId   String   @map("service_id") @db.Uuid
+  field       GapField
+  appliesTo   String   @default("") @map("applies_to")
+  sourceId    String   @map("source_id") @db.Uuid
+  checkedAt   DateTime @default(now()) @map("checked_at") @db.Timestamptz
+  checkedById String?  @map("checked_by") @db.Uuid
+
+  service Service @relation(fields: [serviceId], references: [id])
+  source  Source  @relation(fields: [sourceId], references: [id])
+
+  @@unique([serviceId, field, appliesTo, sourceId])
+  @@map("field_gaps")
+}
+
+// ─── Sources ──────────────────────────────────────────────────────────────
+
+model Source {
+  id            String        @id @default(uuid()) @db.Uuid
+  /// Matches data/metadata/sources.csv (e.g. S001)
+  code          String        @unique
+  url           String
+  name          String
+  publisher     String
+  sourceType    SourceType    @map("source_type")
+  tier          SourceTier
+  language      Language
+  status        ContentStatus @default(PENDING)
+  lastCheckedAt DateTime?     @map("last_checked_at") @db.Timestamptz
+  notes         String?
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  snapshots       SourceSnapshot[]
+  services        ServiceSource[]
+  requirements    Requirement[]
+  steps           ServiceStep[]
+  fees            Fee[]
+  processingTimes ProcessingTime[]
+  locations       ServiceLocation[]
+  gaps            FieldGap[]
+
+  @@map("sources")
+}
+
+model SourceSnapshot {
+  id          String   @id @default(uuid()) @db.Uuid
+  sourceId    String   @map("source_id") @db.Uuid
+  collectedAt DateTime @map("collected_at") @db.Timestamptz
+  sha256      String   @db.Char(64)
+  contentType String?  @map("content_type")
+  bytes       Int?
+  storagePath String   @map("storage_path")
+
+  source          Source            @relation(fields: [sourceId], references: [id])
+  extractionJobs  ExtractionJob[]
+  requirements    Requirement[]
+  steps           ServiceStep[]
+  fees            Fee[]
+  processingTimes ProcessingTime[]
+  locations       ServiceLocation[]
+
+  @@unique([sourceId, sha256])
+  @@map("source_snapshots")
+}
+
+model ServiceSource {
+  serviceId String          @map("service_id") @db.Uuid
+  sourceId  String          @map("source_id") @db.Uuid
+  relevance SourceRelevance
+
+  service Service @relation(fields: [serviceId], references: [id])
+  source  Source  @relation(fields: [sourceId], references: [id])
+
+  @@id([serviceId, sourceId])
+  @@map("service_sources")
+}
+
+// ─── Review & history ─────────────────────────────────────────────────────
+
+model Verification {
+  id         String             @id @default(uuid()) @db.Uuid
+  entityType EntityType         @map("entity_type")
+  entityId   String             @map("entity_id") @db.Uuid
+  action     VerificationAction
+  reviewerId String             @map("reviewer_id") @db.Uuid
+  comment    String?
+  createdAt  DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  reviewer User @relation(fields: [reviewerId], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("verifications")
+}
+
+model ChangeRecord {
+  id               String     @id @default(uuid()) @db.Uuid
+  serviceId        String     @map("service_id") @db.Uuid
+  entityType       EntityType @map("entity_type")
+  entityId         String     @map("entity_id") @db.Uuid
+  previousEntityId String?    @map("previous_entity_id") @db.Uuid
+  changeType       ChangeType @map("change_type")
+  summaryKm        String?    @map("summary_km")
+  summaryEn        String?    @map("summary_en")
+  diff             Json?
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@index([serviceId, createdAt])
+  @@map("change_records")
+}
+
+model ExtractionJob {
+  id               String    @id @default(uuid()) @db.Uuid
+  sourceSnapshotId String    @map("source_snapshot_id") @db.Uuid
+  serviceId        String    @map("service_id") @db.Uuid
+  status           JobStatus @default(QUEUED)
+  modelVersion     String?   @map("model_version")
+  requestedById    String?   @map("requested_by") @db.Uuid
+  itemsProposed    Int       @default(0) @map("items_proposed")
+  error            String?
+  startedAt        DateTime? @map("started_at") @db.Timestamptz
+  finishedAt       DateTime? @map("finished_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  sourceSnapshot  SourceSnapshot    @relation(fields: [sourceSnapshotId], references: [id])
+  service         Service           @relation(fields: [serviceId], references: [id])
+  requirements    Requirement[]
+  steps           ServiceStep[]
+  fees            Fee[]
+  processingTimes ProcessingTime[]
+  locations       ServiceLocation[]
+
+  @@map("extraction_jobs")
+}
+
+model MlPrediction {
+  id           String         @id @default(uuid()) @db.Uuid
+  serviceId    String         @map("service_id") @db.Uuid
+  kind         PredictionKind
+  modelVersion String         @map("model_version")
+  score        Float?         @db.Real
+  /// Contributing factors; shape varies by model version.
+  output       Json
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@index([serviceId, kind, createdAt])
+  @@map("ml_predictions")
+}
+
+/// Append-only (enforced by convention and tests; no update/delete code paths).
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  metadata   Json?
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ─── Citizen features ─────────────────────────────────────────────────────
+
+model Checklist {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  serviceId   String    @map("service_id") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service Service         @relation(fields: [serviceId], references: [id])
+  items   ChecklistItem[]
+
+  @@unique([userId, serviceId])
+  @@map("checklists")
+}
+
+model ChecklistItem {
+  id            String    @id @default(uuid()) @db.Uuid
+  checklistId   String    @map("checklist_id") @db.Uuid
+  /// Exactly one of requirementId / stepId is set (CHECK in migration).
+  requirementId String?   @map("requirement_id") @db.Uuid
+  stepId        String?   @map("step_id") @db.Uuid
+  /// Copied at creation so the checklist stays readable after content changes.
+  labelKm       String    @map("label_km")
+  labelEn       String?   @map("label_en")
+  position      Int
+  isDone        Boolean   @default(false) @map("is_done")
+  doneAt        DateTime? @map("done_at") @db.Timestamptz
+
+  checklist   Checklist    @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  requirement Requirement? @relation(fields: [requirementId], references: [id])
+  step        ServiceStep? @relation(fields: [stepId], references: [id])
+
+  @@map("checklist_items")
+}
+
+/// Privacy: no names, phone numbers, ID numbers or IPs (spec §15).
+model Feedback {
+  id              String           @id @default(uuid()) @db.Uuid
+  serviceId       String           @map("service_id") @db.Uuid
+  userId          String?          @map("user_id") @db.Uuid
+  kind            FeedbackKind
+  rating          Int?             @db.SmallInt
+  difficulty      Int?             @db.SmallInt
+  foundNeeded     Boolean?         @map("found_needed")
+  outcome         FeedbackOutcome?
+  confusingStepId String?          @map("confusing_step_id") @db.Uuid
+  comment         String?
+  status          FeedbackStatus   @default(OPEN)
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  service       Service      @relation(fields: [serviceId], references: [id])
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  confusingStep ServiceStep? @relation(fields: [confusingStepId], references: [id])
+
+  @@index([serviceId, createdAt])
+  @@map("feedback")
+}

@@ -1,6 +1,8 @@
 # 03: API Specification
 
 Base path: `/api`. JSON only. All timestamps are ISO-8601 UTC.
+
+> Implemented in Phase 4 (`backend/`), except where marked *not built yet*. Also: `GET /api/health` (public) returns `{status: "ok"}` when the database is reachable.
 Auth: `Authorization: Bearer <access token>` (see [04_auth_and_roles.md](04_auth_and_roles.md)).
 Access legend: 🌐 public · 👤 any signed-in user · 🛡️ `ADMIN` only.
 
@@ -122,20 +124,24 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 
 | Method | Path | Access | Notes |
 |---|---|---|---|
-| GET | `/admin/services` | 🛡️ | All statuses |
-| POST | `/services` | 🛡️ | Creates a `DRAFT` service |
-| PATCH | `/services/:id` | 🛡️ | Service metadata (names, category, publish status) |
-| DELETE | `/services/:id` | 🛡️ | Soft delete → `ARCHIVED` |
-| POST | `/admin/services/:id/:contentType` | 🛡️ | `contentType` ∈ `requirements`, `steps`, `fees`, `processing-times`, `locations`. Creates a `PENDING` row; `sourceId` + `evidence` required |
+| GET | `/admin/services` | 🛡️ | All statuses; filter `publishStatus` |
+| GET | `/admin/services/:id` | 🛡️ | Includes linked sources, gaps, and content counts |
+| POST | `/admin/services` | 🛡️ | Creates a `DRAFT` service (`nameEn` required, `nameKm` optional) |
+| PATCH | `/admin/services/:id` | 🛡️ | Service metadata and publish status. Publishing needs a Khmer name and at least one verified requirement or step |
+| DELETE | `/admin/services/:id` | 🛡️ | Soft delete → `ARCHIVED` |
+| GET | `/admin/services/:id/:contentType` | 🛡️ | All rows of that type, any status |
+| POST | `/admin/services/:id/:contentType` | 🛡️ | `contentType` ∈ `requirements`, `steps`, `fees`, `processing-times`, `locations`. Creates a `PENDING` row; `sourceId` + `evidence` required; text in Khmer or English (Khmer is required later, to approve) |
+| GET | `/admin/content/:contentType/:id` | 🛡️ | One row, any status |
 | PATCH | `/admin/content/:contentType/:id` | 🛡️ | On a `VERIFIED` row this **creates a new `PENDING` row** that supersedes it; on a `PENDING` row it edits in place |
-| POST | `/admin/services/:id/gaps` | 🛡️ | Records "checked, not stated" |
+| POST | `/admin/services/:id/gaps` | 🛡️ | `{field, sourceId, appliesTo?}`: records "checked, not stated" |
 
 ## Admin: review (verification workflow)
 
 | Method | Path | Access | Notes |
 |---|---|---|---|
 | GET | `/admin/review` | 🛡️ | Queue of `PENDING` / `UNDER_REVIEW` rows across content types. Filters: `service`, `origin`, `minConfidence`. Each item includes source, evidence, and the superseded row (for a diff) |
-| POST | `/admin/review/:contentType/:id/approve` | 🛡️ | Transaction: row → `VERIFIED`; superseded row → `OUTDATED`; `verifications` + `change_records` + `audit_logs`; updates `services.last_verified_at`. `422` without a verified T1/T2 source |
+| POST | `/admin/review/:contentType/:id/start` | 🛡️ | `PENDING` → `UNDER_REVIEW` (optional; signals that someone is working on it) |
+| POST | `/admin/review/:contentType/:id/approve` | 🛡️ | Transaction: row → `VERIFIED`; superseded row → `OUTDATED`; `verifications` + `change_records` + `audit_logs`; updates `services.last_verified_at`. `422` without Khmer text, evidence, or a verified T1/T2 source |
 | POST | `/admin/review/:contentType/:id/reject` | 🛡️ | `{comment}` required |
 | POST | `/admin/content/:contentType/:id/mark-outdated` | 🛡️ | `{comment}` required |
 
@@ -146,12 +152,13 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | GET | `/sources` | 🛡️ | Filters: `status`, `tier`, `service` |
 | POST | `/sources` | 🛡️ | Created as `PENDING` |
 | PATCH | `/sources/:id` | 🛡️ | Metadata only |
-| POST | `/sources/:id/verify` | 🛡️ | → `VERIFIED` (records a verification) |
+| GET | `/sources/:id` | 🛡️ | With snapshots and linked services |
+| POST | `/sources/:id/decision` | 🛡️ | `{status: VERIFIED \| REJECTED \| OUTDATED, comment?}` (records a verification). Changing a verified source's URL or tier sends it back to `PENDING` |
 | POST | `/sources/:id/snapshots` | 🛡️ | Registers a snapshot `{collectedAt, sha256, storagePath}` |
-| PUT | `/services/:id/sources/:sourceId` | 🛡️ | `{relevance}`: link a source |
-| DELETE | `/services/:id/sources/:sourceId` | 🛡️ | Unlink a source |
+| PUT | `/admin/services/:id/sources/:sourceId` | 🛡️ | `{relevance}`: link a source |
+| DELETE | `/admin/services/:id/sources/:sourceId` | 🛡️ | Unlink a source |
 
-## Admin: extraction (Phase 7)
+## Admin: extraction (Phase 7, not built yet)
 
 | Method | Path | Access | Notes |
 |---|---|---|---|
@@ -166,7 +173,7 @@ Another user's checklist returns `404`, not `403`, so the API doesn't reveal tha
 | PATCH | `/admin/users/:id` | 🛡️ | `{role?, isActive?}`. An admin cannot demote or deactivate themselves (prevents lockout) |
 | GET | `/admin/analytics/overview` | 🛡️ | Counts: services by status/category, sources by status, pending reviews, outdated items, feedback this period |
 | GET | `/admin/analytics/feedback` | 🛡️ | Difficulty and rating by service, most-reported confusing steps (with Wilson CIs, RQ3) |
-| GET | `/admin/analytics/complexity` | 🛡️ | Score distribution and top factors (Phase 7) |
+| GET | `/admin/analytics/complexity` | 🛡️ | Score distribution and top factors (**Phase 7, not built yet**) |
 | GET | `/admin/audit-logs` | 🛡️ | Filters: `actor`, `action`, `from`, `to` |
 
 ## Internal: ML service (not exposed publicly)

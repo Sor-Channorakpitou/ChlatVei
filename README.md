@@ -1,4 +1,4 @@
-# ChlatVei (ឆ្លាតវៃ)
+# ChlatVei
 
 > Smarter Citizens, Simpler Services.
 
@@ -10,7 +10,9 @@ For each service, citizens can see eligibility, required documents, steps, fees,
 
 - **Phase 1: Research.** Done; see [docs/research](docs/research/README.md).
 - **Phase 2: Data.** In progress; see the [Phase 2 report](docs/data/phase2_report.md), [collection methodology](docs/data/collection_methodology.md) and [data dictionary](data/metadata/data_dictionary.md).
-- **Phase 3: Architecture.** Drafted; see [docs/architecture](docs/architecture/README.md): system design, data model, API spec, auth, and ADRs.
+- **Phase 3: Architecture.** Done; see [docs/architecture](docs/architecture/README.md): system design, data model, API spec, auth, and ADRs.
+- **Phase 4: Backend.** Done; see the [backend guide](docs/backend/README.md). 28 end-to-end tests cover the spec's citizen and admin flows.
+- **UI prototype:** [docs/design](docs/design/README.md) (design reference for Phase 5).
 
 See [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) for the full specification and development order.
 
@@ -42,6 +44,10 @@ Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`, ...).
 ## Security
 
 Never commit `.env` files, API keys, passwords, database credentials, or tokens. Use `.env.example` to document the required variables.
+
+## Run the backend
+
+See [docs/backend/README.md](docs/backend/README.md#1-run-it-about-5-minutes). In short: `docker compose up -d postgres`, then in `backend/`: `npm install`, `npx prisma migrate deploy`, `npm run seed`, `npm run start:dev`.
 
 ## Data pipeline
 
